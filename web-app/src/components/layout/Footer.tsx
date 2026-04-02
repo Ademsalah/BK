@@ -45,7 +45,7 @@ export default function Footer() {
           <div className="flex gap-2">
             <Input type="email" placeholder="Votre Email" textcolor="white" />
             <button className="bg-red-500 px-4 py-2 rounded-full">
-              S'inscrire
+              abonner
             </button>
           </div>
         </div>
