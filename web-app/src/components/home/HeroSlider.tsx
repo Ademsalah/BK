@@ -1,12 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
-
-const images = [
-  "/images/slide1.jpg",
-  "/images/slide2.jpg",
-  "/images/slide3.jpg",
-];
+import show from "../../../public/images/show.jpg";
+const images = [show, show, show];
 
 export default function HeroSlider() {
   const [current, setCurrent] = useState(0);
@@ -30,12 +27,14 @@ export default function HeroSlider() {
   };
 
   return (
-    <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
+    <div className="relative w-full h-screen overflow-hidden">
       {/* Image */}
-      <img
+      <Image
         src={images[current]}
         alt="slide"
-        className="w-full h-full object-cover transition-all duration-700"
+        className="w-full  h-full object-cover transition-all duration-700"
+        width={500}
+        height={500}
       />
 
       {/* Overlay */}

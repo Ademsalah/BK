@@ -5,13 +5,23 @@ import { Search } from "lucide-react";
 
 export default function Navbar() {
   const router = useRouter();
-  const pathname = usePathname(); // 👈 get current route
+  const pathname = usePathname();
+
+  const handleScroll = (id) => {
+    if (pathname === "/home") {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: "smooth",
+      });
+    } else {
+      router.push(`/home#${id}`);
+    }
+  };
 
   const navItems = [
     { name: "Accueil", path: "/home" },
     { name: "Evenements", path: "/events" },
-    { name: "À Propos De Nous", path: "/about" },
-    { name: "Contactez-Nous", path: "/contact" },
+    { name: "À Propos De Nous", action: () => handleScroll("about") },
+    { name: "Contactez-Nous", action: () => handleScroll("contact") },
     { name: "Login", path: "/login" },
   ];
 
@@ -19,7 +29,7 @@ export default function Navbar() {
     <nav className="w-full bg-white shadow-sm px-10 py-4 flex items-center justify-between">
       {/* LOGO */}
       <div
-        onClick={() => router.push("/")}
+        onClick={() => router.push("/home")}
         className="text-[#ff2d20] font-bold text-xl cursor-pointer"
       >
         BK<span className="text-sm ml-1">Event & Loisirs</span>
@@ -27,15 +37,13 @@ export default function Navbar() {
 
       {/* LINKS */}
       <div className="hidden md:flex gap-8 text-sm font-medium">
-        {navItems.map((item) => (
+        {navItems.map((item, index) => (
           <p
-            key={item.path}
-            onClick={() => router.push(item.path)}
-            className={`cursor-pointer transition ${
-              pathname === item.path
-                ? "text-orange-500 font-semibold" // ✅ ACTIVE
-                : "text-[#07173b] hover:text-orange-400"
-            }`}
+            key={index}
+            onClick={() =>
+              item.action ? item.action() : router.push(item.path)
+            }
+            className="cursor-pointer text-[#07173b] hover:text-orange-400 transition"
           >
             {item.name}
           </p>

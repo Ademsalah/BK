@@ -71,11 +71,11 @@ export default function ShowsSection() {
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="hidden md:flex w-1/2 bg-red-600 items-center justify-center relative">
+      <div className="hidden md:flex w-1/2 bg-white items-center justify-center relative">
         <img
           src="/images/show.jpg"
           alt="show"
-          className="w-64 h-80 object-cover shadow-lg"
+          className="w-128 h-160 object-cover shadow-lg"
         />
       </div>
     </section>

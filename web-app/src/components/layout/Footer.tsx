@@ -3,13 +3,13 @@ import Input from "../ui/Input";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#07173b] text-white pt-16 px-10">
+    <footer className="bg-[#e6000a] text-white pt-16 px-10">
       <div className="grid md:grid-cols-3 gap-10">
         {/* LEFT */}
         <div className="space-y-4">
-          <h2 className="text-red-500 text-2xl font-bold">
-            BK. <span className="text-sm text-white">EVENT & LOISIRS</span>
-          </h2>
+          <h1 className=" text-2xl font-bold">
+           <span className="text-sm text-white"> BK. EVENT & LOISIRS</span>
+          </h1>
 
           <p className="text-sm text-gray-300">Tunis, Tunisie</p>
 
@@ -44,7 +44,7 @@ export default function Footer() {
 
           <div className="flex gap-2">
             <Input type="email" placeholder="Votre Email" textcolor="white" />
-            <button className="bg-red-500 px-4 py-2 rounded-full">
+            <button className="bg-white text-[#e6000a] px-4 py-2 rounded-full">
               abonner
             </button>
           </div>
@@ -52,9 +52,9 @@ export default function Footer() {
       </div>
 
       {/* SOCIAL + COPYRIGHT */}
-      <div className="border-t border-gray-600 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
-        <p className="text-sm text-gray-400">
-          © 2025 Big House Marketing. Tous droits réservés.
+      <div className="border-t border-white mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <p className="text-sm text-white">
+          © 2026 BK. EVENT & LOISIRS. Tous droits réservés.
         </p>
 
         <div className="flex gap-4 mt-4 md:mt-0">
