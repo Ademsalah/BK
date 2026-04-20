@@ -7,7 +7,6 @@ export default function AboutSection() {
     <section id="about" className="min-h-screen grid md:grid-cols-2">
       {/* LEFT IMAGE SIDE */}
       <div className="relative h-[400px] md:h-auto">
-        
         <img
           src="/images/event.jpg" // 👈 replace with your image
           alt="event"

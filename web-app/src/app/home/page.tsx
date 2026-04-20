@@ -8,8 +8,8 @@ export default function Home() {
     <div>
       <HeroSlider />
       <ShowsSection />
-      <ContactSection />
       <AboutSection />
+      <ContactSection />
     </div>
   );
 }
