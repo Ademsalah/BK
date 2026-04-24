@@ -26,11 +26,7 @@ export default function SignupPage() {
         </Link>
       </p>
 
-      <div className="flex justify-center gap-4 text-xl">
-        <span>🌐</span>
-        <span>💬</span>
-        <span>📩</span>
-      </div>
+      
     </div>
   );
 }
