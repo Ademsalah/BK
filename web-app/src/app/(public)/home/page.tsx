@@ -5,11 +5,14 @@ import ShowsSection from "@/components/home/ShowsSection";
 
 export default function Home() {
   return (
-    <div>
+    <main className="flex flex-col w-full overflow-x-hidden">
       <HeroSlider />
-      <ShowsSection />
-      <AboutSection />
-      <ContactSection />
-    </div>
+
+      <div className="space-y-0">
+        <ShowsSection />
+        <AboutSection />
+        <ContactSection />
+      </div>
+    </main>
   );
 }

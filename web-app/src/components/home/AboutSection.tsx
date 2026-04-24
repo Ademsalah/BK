@@ -1,56 +1,55 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="min-h-screen grid md:grid-cols-2">
+    <section
+      id="about"
+      className="grid grid-cols-1 md:grid-cols-2 min-h-[60vh] md:min-h-[80vh]"
+    >
       {/* LEFT IMAGE SIDE */}
-      <div className="relative h-[400px] md:h-auto">
-        <img
-          src="/images/event.jpg" // 👈 replace with your image
-          alt="event"
-          className="w-full h-full object-cover"
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="relative w-full h-[280px] sm:h-[380px] md:h-full"
+      >
+        <Image
+          src="/bkevent.png"
+          alt="Event Image"
+          fill
+          className="object-cover"
         />
-
-        {/* DARK OVERLAY */}
-        <div className="absolute inset-0 bg-[#1c0f2e]/80"></div>
-
-        {/* BIG TEXT */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-white text-6xl md:text-7xl font-extrabold tracking-widest text-center leading-tight">
-            <span className="text-[#e6000a]">BK</span> <br /> EVENTS
-          </h1>
-        </div>
-      </div>
+      </motion.div>
 
       {/* RIGHT CONTENT SIDE */}
       <motion.div
-        initial={{ opacity: 0, x: 80 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, y: -60 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-gray-100 flex flex-col justify-center px-10 md:px-16 py-16 text-center"
+        viewport={{ once: true }}
+        className="bg-[#1c0f2e] flex flex-col justify-center px-6 sm:px-10 md:px-16 py-12 text-center"
       >
-        {/* ICON */}
-        <div className="text-red-600 text-4xl mb-6">✕</div>
+        <div className="text-red-600 text-3xl sm:text-4xl mb-4">
+          ✕
+        </div>
 
-        {/* TITLE */}
-        <h2 className="text-2xl font-bold tracking-widest text-red-600 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-widest text-red-600 mb-6">
           À PROPOS <br /> DE BK EVENTS
         </h2>
 
-        {/* TEXT */}
-        <p className="text-gray-600 text-sm leading-relaxed max-w-md mx-auto">
+        <p className="text-gray-400 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
           BK Events est une entreprise tunisienne spécialisée dans
-          l’événementiel, la communication et les solutions digitales. Nous
-          accompagnons nos clients dans la création et la réussite de leurs
-          projets avec innovation et professionnalisme.
+          l’événementiel, la communication et les solutions digitales.
+          Nous accompagnons nos clients avec innovation et professionnalisme.
         </p>
 
-        <p className="text-gray-500 text-sm mt-6 max-w-md mx-auto">
+        <p className="text-gray-500 text-sm sm:text-base mt-5 max-w-md mx-auto">
           Notre objectif est d’apporter une réelle valeur ajoutée grâce à des
-          solutions modernes, créatives et adaptées aux besoins de chaque
-          client.
+          solutions modernes et créatives adaptées à chaque client.
         </p>
       </motion.div>
     </section>

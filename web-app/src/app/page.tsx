@@ -1,7 +1,5 @@
-export default function Home() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-    
-    </div>
-  );
+import { redirect } from "next/navigation";
+
+export default function Page() {
+  redirect("/home");
 }
