@@ -1,14 +1,14 @@
-import Input from "./ui/Input";
-
-
+"use client";
+import { useState } from "react";
 export default function Footer() {
+  const [email, setEmail] = useState("");
   return (
     <footer className="bg-[#e6000a] text-white pt-16 px-10">
       <div className="grid md:grid-cols-3 gap-10">
         {/* LEFT */}
         <div className="space-y-4">
           <h1 className=" text-2xl font-bold">
-           <span className="text-sm text-white"> BK. EVENT & LOISIRS</span>
+            <span className="text-sm text-white"> BK. EVENT & LOISIRS</span>
           </h1>
 
           <p className="text-sm text-gray-300">Tunis, Tunisie</p>
@@ -42,12 +42,16 @@ export default function Footer() {
             Recevez nos dernières actualités directement dans votre boîte mail.
           </p>
 
-          <div className="flex gap-2">
-            <Input type="email" placeholder="Votre Email" textcolor="white" />
+          {/* <div className="flex gap-2">
+            <Input
+              type="email"
+              placeholder="Votre Email"
+              onChange={(e) => console.log(e.target.value)}
+            />
             <button className="bg-white text-[#e6000a] px-4 py-2 rounded-full">
               abonner
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 

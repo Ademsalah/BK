@@ -13,7 +13,7 @@ export default function PrestataireD() {
   // 📥 GET ALL PRESTATAIRES (NO TOKEN)
   const fetchPrestataires = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/prestataires");
+      const res = await axios.get("http://localhost:5000/prestataires");
 
       console.log(res.data);
       setPrestataires(res.data);
@@ -37,7 +37,7 @@ export default function PrestataireD() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:3000/prestataires/${id}`);
+      await axios.delete(`http://localhost:5000/prestataires/${id}`);
 
       setPrestataires((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
