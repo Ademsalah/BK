@@ -3,10 +3,10 @@ const express = require("express");
 const app = express();
 const db = require("./models");
 const cors = require("cors");
+app.use(express.json());
 
 // middlewares
 app.use(cors());
-app.use(express.json());
 
 // routes
 app.use("/auth", require("./routes/auth.routes"));
@@ -18,7 +18,7 @@ app.use("/event-prestataires", require("./routes/eventPrestataire.routes"));
 app.use("/prestataires", require("./routes/prestataire.routes"));
 
 db.sequelize.sync().then(() => {
-  app.listen(3000, () => {
+  app.listen(5000, () => {
     console.log("🚀 Server running");
   });
 });
