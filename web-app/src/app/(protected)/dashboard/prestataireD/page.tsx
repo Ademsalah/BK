@@ -1,43 +1,78 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function PrestataireD() {
-  const [prestataires, setPrestataires] = useState([
-    { id: 1, name: "Ali Services", skill: "Traiteur", city: "Tunis" },
-    { id: 2, name: "DJ NightPro", skill: "DJ", city: "Sousse" },
-    { id: 3, name: "PhotoVision", skill: "Photographie", city: "Ariana" },
-    { id: 4, name: "Decor Plus", skill: "Décoration", city: "Sfax" },
-    { id: 5, name: "Sound Masters", skill: "Sonorisation", city: "Hammamet" },
-    { id: 6, name: "Event Cleaners", skill: "Nettoyage", city: "Bizerte" },
-  ]);
+  const router = useRouter();
 
-  // Supprimer prestataire
-  const handleDelete = (id) => {
-    setPrestataires(prestataires.filter((p) => p.id !== id));
+  const [prestataires, setPrestataires] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 📥 GET ALL PRESTATAIRES (NO TOKEN)
+  const fetchPrestataires = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/prestataires");
+
+      console.log(res.data);
+      setPrestataires(res.data);
+    } catch (err) {
+      console.error("Error loading prestataires:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Modifier prestataire (simulation)
+  useEffect(() => {
+    fetchPrestataires();
+  }, []);
+
+  // 🗑 DELETE (NO TOKEN)
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "⚠️ Are you sure you want to delete this prestataire?",
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:3000/prestataires/${id}`);
+
+      setPrestataires((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Delete failed");
+    }
+  };
+
   const handleUpdate = (id) => {
-    alert("Modifier prestataire : " + id);
+    router.push(`/dashboard/prestataireD/create/${id}`);
   };
 
-  // Initiales avatar
-  const getInitials = (name) => {
-    return name
+  const getInitials = (name = "") =>
+    name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase();
-  };
+
+  if (loading) {
+    return <p className="p-6 text-white">Loading...</p>;
+  }
 
   return (
     <div className="min-h-screen p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-black">Prestataires</h1>
 
-      {/* Titre */}
-      <h1 className="text-3xl font-bold text-black mb-6">
-        Prestataires
-      </h1>
+        <button
+          onClick={() => router.push("/dashboard/prestataireD/create")}
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition"
+        >
+          + Créer un prestataire
+        </button>
+      </div>
 
       {/* Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -47,7 +82,6 @@ export default function PrestataireD() {
             className="rounded-2xl p-5 shadow-lg border border-white/10 hover:scale-[1.02] transition"
             style={{ backgroundColor: "#2a1845" }}
           >
-
             {/* Avatar + infos */}
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white font-bold">
@@ -55,20 +89,16 @@ export default function PrestataireD() {
               </div>
 
               <div>
-                <h2 className="text-white font-semibold text-lg">
-                  {p.name}
-                </h2>
+                <h2 className="text-white font-semibold text-lg">{p.name}</h2>
 
-                <p className="text-gray-400 text-sm">
-                  📍 {p.city}
-                </p>
+                <p className="text-gray-400 text-sm">📍 {p.location}</p>
               </div>
             </div>
 
-            {/* Compétence */}
+            {/* Skill */}
             <div className="mt-4">
               <span className="bg-white/10 text-white px-3 py-1 rounded-full text-sm">
-                🛠️ {p.skill}
+                🛠️ {p.category}
               </span>
             </div>
 
@@ -88,7 +118,6 @@ export default function PrestataireD() {
                 Supprimer
               </button>
             </div>
-
           </div>
         ))}
       </div>
