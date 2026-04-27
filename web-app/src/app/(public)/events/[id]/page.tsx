@@ -1,24 +1,39 @@
 "use client";
 
+import axios from "axios";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 
 export default function EventDetailsPage() {
   const params = useParams();
   const id = params.id;
 
-  const event = {
-    id,
-    title: "Teflon T",
-    date: "14-08-2025",
-    location: "Paris, France",
-    price: 40,
-    image: "/images/show.jpg",
-  };
+  const [event, setEvent] = useState<any>(null);
 
   const [quantity, setQuantity] = useState(0);
+  const total = event?.ticketPrice * quantity;
 
-  const total = quantity * event.price;
+  useEffect(() => {
+    try {
+      const fetchEvent = async () => {
+        const response = await axios.get(`http://localhost:5000/events/${id}`);
+        console.log(response.data);
+
+        setEvent(response.data);
+      };
+      fetchEvent();
+    } catch (error) {
+      console.error(error);
+    }
+  }, [id]);
+
+  if (!event) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#1c0f2e] text-white">
@@ -26,7 +41,12 @@ export default function EventDetailsPage() {
       <div className="text-center py-16">
         <h1 className="text-3xl font-bold">{event.title}</h1>
         <p className="text-gray-400 mt-2">
-          {event.date} • {event.location}
+          {new Date(event.date).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          })}{" "}
+          • {event.location}
         </p>
 
         <button className="mt-6 bg-red-500 px-6 py-2 rounded-full">
@@ -42,10 +62,8 @@ export default function EventDetailsPage() {
       {/* BOTTOM SECTION */}
       <div className="bg-red-600 mt-[-50px] pt-20 pb-16 px-10 max-w-4xl mx-auto rounded-t-2xl">
         {/* TIME */}
-        <h2 className="text-lg font-semibold mb-2">Time & Location</h2>
-        <p className="text-sm mb-6">
-          {event.date} — {event.location}
-        </p>
+        <h2 className="text-lg font-semibold mb-2">Description</h2>
+        <p className="text-sm mb-6">{event.description}</p>
 
         {/* TICKETS */}
         <h2 className="text-lg font-semibold mb-4">Tickets</h2>
@@ -53,7 +71,7 @@ export default function EventDetailsPage() {
         <div className="flex justify-between items-center border-b border-white/30 pb-4">
           <div>
             <p>Billet normal</p>
-            <p className="text-sm">{event.price} €</p>
+            <p className="text-sm">{event.ticketPrice} DT</p>
           </div>
 
           {/* QUANTITY CONTROL */}
@@ -79,7 +97,7 @@ export default function EventDetailsPage() {
         {/* TOTAL */}
         <div className="flex justify-between mt-6 text-lg font-semibold">
           <p>Total</p>
-          <p>{total.toFixed(2)} €</p>
+          <p>{total.toFixed(2)} DT</p>
         </div>
 
         {/* CHECKOUT */}

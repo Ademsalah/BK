@@ -1,24 +1,41 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function PrestataireD() {
   const router = useRouter();
 
-  const [prestataires, setPrestataires] = useState([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 📥 GET ALL PRESTATAIRES (NO TOKEN)
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "active" | "banned">("all");
+
+  // ✅ MODALS
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showBanModal, setShowBanModal] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [pendingAction, setPendingAction] = useState<"ban" | "unban" | null>(
+    null,
+  );
+
+  // pagination (RESTORED)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
+  // 📥 FETCH
   const fetchPrestataires = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/prestataires");
-
-      console.log(res.data);
-      setPrestataires(res.data);
+      setLoading(true);
+      const res = await axios.get("http://localhost:5000/prestataires");
+      setUsers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error("Error loading prestataires:", err);
+      console.error(err);
+      toast.error("Erreur lors du chargement");
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -28,25 +45,51 @@ export default function PrestataireD() {
     fetchPrestataires();
   }, []);
 
-  // 🗑 DELETE (NO TOKEN)
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "⚠️ Are you sure you want to delete this prestataire?",
-    );
-
-    if (!confirmDelete) return;
+  // 🚫 BAN / UNBAN (ONLY AFTER CONFIRMATION)
+  const confirmBanAction = async () => {
+    if (!selectedId) return;
 
     try {
-      await axios.delete(`http://localhost:3000/prestataires/${id}`);
+      const res = await axios.patch(
+        `http://localhost:5000/prestataires/${selectedId}/ban`,
+      );
 
-      setPrestataires((prev) => prev.filter((p) => p.id !== id));
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === selectedId ? { ...u, banned: res.data.banned } : u,
+        ),
+      );
+
+      toast.success(
+        res.data.banned ? "Prestataire banni 🚫" : "Prestataire débanni ✅",
+      );
+
+      setShowBanModal(false);
+      setSelectedId(null);
     } catch (err) {
-      console.error(err);
-      alert("Delete failed");
+      toast.error("Action échouée");
     }
   };
 
-  const handleUpdate = (id) => {
+  // 🗑 DELETE (FIXED)
+  const confirmDelete = async () => {
+    if (!selectedId) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/prestataires/${selectedId}`);
+
+      setUsers((prev) => prev.filter((u) => u.id !== selectedId));
+
+      toast.success("Prestataire supprimé 🗑️");
+
+      setShowDeleteModal(false);
+      setSelectedId(null);
+    } catch (err) {
+      toast.error("Suppression échouée");
+    }
+  };
+
+  const handleUpdate = (id: number) => {
     router.push(`/dashboard/prestataireD/create/${id}`);
   };
 
@@ -57,63 +100,131 @@ export default function PrestataireD() {
       .join("")
       .toUpperCase();
 
-  if (loading) {
-    return <p className="p-6 text-white">Loading...</p>;
-  }
+  // 🔍 FILTER
+  const filtered = useMemo(() => {
+    return users.filter((u) => {
+      const matchSearch =
+        u?.name?.toLowerCase().includes(search.toLowerCase()) ||
+        u?.email?.toLowerCase().includes(search.toLowerCase());
+
+      const matchFilter =
+        filter === "all" ? true : filter === "active" ? !u.banned : u.banned;
+
+      return matchSearch && matchFilter;
+    });
+  }, [users, search, filter]);
+
+  // 📊 STATS
+  const stats = useMemo(() => {
+    return {
+      total: users.length,
+      active: users.filter((u) => !u.banned).length,
+      banned: users.filter((u) => u.banned).length,
+    };
+  }, [users]);
+
+  // 📄 PAGINATION (RESTORED EXACT LOGIC)
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const current = filtered.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  if (loading) return <p className="p-6">Loading...</p>;
 
   return (
     <div className="min-h-screen p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-black">Prestataires</h1>
+      <h1 className="text-3xl font-bold mb-4">Prestataires</h1>
 
-        <button
-          onClick={() => router.push("/dashboard/prestataireD/create")}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition"
-        >
-          + Créer un prestataire
-        </button>
+      {/* STATS */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="p-4 bg-[#2a1845] text-white rounded-xl">
+          Total: {stats.total}
+        </div>
+        <div className="p-4 bg-[#2a1845] text-green-400 rounded-xl">
+          Actifs: {stats.active}
+        </div>
+        <div className="p-4 bg-[#2a1845] text-red-400 rounded-xl">
+          Bannis: {stats.banned}
+        </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {prestataires.map((p) => (
-          <div
-            key={p.id}
-            className="rounded-2xl p-5 shadow-lg border border-white/10 hover:scale-[1.02] transition"
-            style={{ backgroundColor: "#2a1845" }}
+      {/* SEARCH */}
+      <input
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setCurrentPage(1);
+        }}
+        placeholder="Rechercher..."
+        className="w-full mb-4 px-4 py-2 bg-[#2a1845] text-white rounded-md"
+      />
+
+      {/* FILTER */}
+      <div className="flex gap-2 mb-6">
+        {(["all", "active", "banned"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-4 py-2 rounded-md ${
+              filter === f ? "bg-red-600" : "bg-[#2a1845]"
+            } text-white`}
           >
-            {/* Avatar + infos */}
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white font-bold">
+            {f.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* GRID */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {current.map((p) => (
+          <div key={p.id} className="p-5 bg-[#2a1845] text-white rounded-xl">
+            <div className="flex gap-3">
+              <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold">
                 {getInitials(p.name)}
               </div>
-
               <div>
-                <h2 className="text-white font-semibold text-lg">{p.name}</h2>
-
-                <p className="text-gray-400 text-sm">📍 {p.location}</p>
+                <p className="font-semibold">{p.name}</p>
+                <p className="text-sm text-gray-300">{p.email}</p>
               </div>
             </div>
 
-            {/* Skill */}
-            <div className="mt-4">
-              <span className="bg-white/10 text-white px-3 py-1 rounded-full text-sm">
-                🛠️ {p.category}
-              </span>
+            <div className="mt-3">
+              {p.banned ? (
+                <span className="text-red-400">BANNI</span>
+              ) : (
+                <span className="text-green-400">ACTIF</span>
+              )}
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-3 mt-5">
+            <div className="flex gap-2 mt-4">
               <button
                 onClick={() => handleUpdate(p.id)}
-                className="bg-white/10 text-white px-3 py-1 rounded-md hover:bg-white/20 transition"
+                className="px-3 py-1 bg-white/10 rounded-md"
               >
                 Modifier
               </button>
 
+              {/* BAN BUTTON → OPENS MODAL */}
               <button
-                onClick={() => handleDelete(p.id)}
-                className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition"
+                onClick={() => {
+                  setSelectedId(p.id);
+                  setShowBanModal(true);
+                  setPendingAction(p.banned ? "unban" : "ban");
+                }}
+                className={`px-3 py-1 rounded-md ${
+                  p.banned ? "bg-green-600" : "bg-red-600"
+                }`}
+              >
+                {p.banned ? "Débannir" : "Bannir"}
+              </button>
+
+              {/* DELETE */}
+              <button
+                onClick={() => {
+                  setSelectedId(p.id);
+                  setShowDeleteModal(true);
+                }}
+                className="px-3 py-1 bg-red-700 rounded-md"
               >
                 Supprimer
               </button>
@@ -121,6 +232,78 @@ export default function PrestataireD() {
           </div>
         ))}
       </div>
+
+      {/* PAGINATION (UNCHANGED) */}
+      <div className="flex justify-center mt-6 gap-2">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-3 py-1 ${
+              currentPage === i + 1 ? "bg-red-600" : "bg-[#2a1845]"
+            } text-white rounded`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+
+      {/* DELETE MODAL */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl w-[320px]">
+            <h2 className="text-lg font-bold mb-2">Confirmation</h2>
+            <p>Êtes-vous sûr de vouloir supprimer ce prestataire ?</p>
+
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-3 py-1"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-3 py-1 bg-red-600 text-white rounded"
+              >
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BAN MODAL */}
+      {showBanModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl w-[320px]">
+            <h2 className="text-lg font-bold mb-2">Confirmation</h2>
+
+            <p>
+              Êtes-vous sûr de vouloir{" "}
+              <b>{pendingAction === "ban" ? "bannir" : "débannir"}</b> ce
+              prestataire ?
+            </p>
+
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => setShowBanModal(false)}
+                className="px-3 py-1"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmBanAction}
+                className={`px-3 py-1 text-white rounded ${
+                  pendingAction === "ban" ? "bg-red-600" : "bg-green-600"
+                }`}
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

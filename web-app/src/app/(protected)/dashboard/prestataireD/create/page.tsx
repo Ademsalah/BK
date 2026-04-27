@@ -36,7 +36,7 @@ export default function CreatePrestatairePage() {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/prestataires/${id}`);
+        const res = await axios.get(`http://localhost:5000/prestataires/${id}`);
 
         reset(res.data); // fill form
       } catch (err) {
@@ -54,7 +54,7 @@ export default function CreatePrestatairePage() {
 
       if (isEdit) {
         // ✏️ UPDATE
-        await axios.put(`http://localhost:3000/prestataires/${id}`, data, {
+        await axios.put(`http://localhost:5000/prestataires/${id}`, data, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -62,7 +62,7 @@ export default function CreatePrestatairePage() {
       } else {
         // ➕ CREATE
         await axios.post(
-          "http://localhost:3000/prestataires/create-prestataire",
+          "http://localhost:5000/prestataires/create-prestataire",
           data,
           //   {
           //     headers: { Authorization: `Bearer ${token}` },

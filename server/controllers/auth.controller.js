@@ -6,18 +6,30 @@ const User = db.User;
 
 // REGISTER
 exports.register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  try {
+    const { name, email, password, role } = req.body;
 
-  const hashed = await bcrypt.hash(password, 10);
+    const exists = await User.findOne({ where: { email } });
+    if (exists) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
 
-  const user = await User.create({
-    name,
-    email,
-    password: hashed,
-    role,
-  });
+    const hashed = await bcrypt.hash(password, 10);
 
-  res.json(user);
+    const user = await User.create({
+      name,
+      email,
+      password: hashed,
+      role: role || "PARTICIPANT",
+    });
+
+    res.json({
+      message: "User created successfully",
+      user,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 // LOGIN
