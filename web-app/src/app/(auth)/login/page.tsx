@@ -8,9 +8,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, LoginSchema } from "./loginSchema";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
-  const Router  = useRouter();
+  const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -24,20 +26,33 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginSchema) => {
-    console.log("LOGIN DATA:", data);
-
     try {
       const res = await axios.post("http://localhost:5000/auth/login", {
         email: data.email,
         password: data.password,
       });
 
-      // save token (example)
-      localStorage.setItem("token", res.data.token);
-Router.push("/");
-      alert("Login successful!");
-    } catch (err) {
-      console.error(err);
+      const { token, user } = res.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", user.role);
+
+      toast.success("Login successful 🎉");
+
+      if (user.role === "ADMIN") {
+        router.push("/dashboard");
+      } else if (user.role === "PARTICIPANT") {
+        router.push("/home");
+      } else if (user.role === "PRESTATAIRE") {
+        router.push("/prestataire");
+      } else {
+        router.push("/");
+      }
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message || "Invalid email or password";
+
+      toast.error(message);
     }
   };
 

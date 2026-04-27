@@ -6,6 +6,12 @@ module.exports = (sequelize, DataTypes) => {
     date: DataTypes.DATE,
     location: DataTypes.STRING,
     totalBudget: DataTypes.FLOAT,
+    ticketPrice: DataTypes.FLOAT,
+    capacity: DataTypes.INTEGER,
+    status: {
+      type: DataTypes.ENUM("mawjoud", "mesh mawjoud"),
+      defaultValue: "mawjoud",
+    },
   });
 
   Event.associate = (models) => {

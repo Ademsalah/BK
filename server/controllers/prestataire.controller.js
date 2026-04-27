@@ -63,7 +63,7 @@ exports.getAllPrestataires = async (req, res) => {
   try {
     const users = await User.findAll({
       where: { role: "PRESTATAIRE" },
-      attributes: ["id", "name", "email", "createdAt"], // 🔥 remove password
+      attributes: ["id", "name", "email", "createdAt", "banned"], // 🔥 ADD banned
     });
 
     const result = await Promise.all(
@@ -81,7 +81,8 @@ exports.getAllPrestataires = async (req, res) => {
           email: user.email,
           createdAt: user.createdAt,
 
-          // flatten profile
+          banned: user.banned, // 🔥 CRITICAL FIX
+
           category: profile?.category,
           priceMin: profile?.priceMin,
           priceMax: profile?.priceMax,
@@ -204,5 +205,29 @@ exports.deletePrestataire = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+exports.toggleBan = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        id: req.params.id,
+        role: "PRESTATAIRE",
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "Prestataire not found" });
+    }
+
+    user.banned = !user.banned;
+    await user.save();
+
+    res.json({
+      id: user.id,
+      banned: user.banned,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

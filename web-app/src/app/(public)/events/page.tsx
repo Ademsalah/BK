@@ -1,24 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-const allEvents = Array.from({ length: 30 }, (_, i) => ({
-  id: i,
-  title: `Event ${i + 1}`,
-  date: "dim. 08 juil.",
-  image: "/images/show.jpg",
-}));
+import axios from "axios";
 
 const ITEMS_PER_PAGE = 9;
 
 export default function EventsPage() {
-  const router = useRouter();
+  const [events, setEvents] = useState<any[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
+  const router = useRouter();
 
-  const totalPages = Math.ceil(allEvents.length / ITEMS_PER_PAGE);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/events?page=${page}&limit=${ITEMS_PER_PAGE}`,
+        );
 
-  const start = (page - 1) * ITEMS_PER_PAGE;
-  const currentEvents = allEvents.slice(start, start + ITEMS_PER_PAGE);
+        setEvents(response.data.data);
+        setTotalPages(response.data.pagination.totalPages);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchEvents();
+  }, [page]);
 
   return (
     <div className="min-h-screen bg-[#1c0f2e] text-white px-10 py-16">
@@ -34,33 +43,37 @@ export default function EventsPage() {
 
       {/* GRID */}
       <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-        {currentEvents.map((event) => (
-          <div key={event.id} className="space-y-4">
+        {events.map((event) => (
+          <div key={event.id} className="space-y-4"
+                onClick={() => router.push(`/events/${event.id}`)}
+          >
             {/* IMAGE */}
             <div className="overflow-hidden">
               <img
-                src={event.image}
-                alt="event"
+                src={event.image || "/images/show.jpg"}
+                alt="event image"
                 className="w-full h-[260px] object-cover hover:scale-105 transition duration-500"
               />
             </div>
 
             {/* CONTENT */}
             <div className="flex justify-between items-end gap-4">
-              {/* LEFT SIDE (TEXT) */}
               <div>
                 <h2 className="font-semibold text-lg leading-tight">
                   {event.title}
                 </h2>
 
-                <p className="text-sm text-gray-400 mt-1">{event.date}</p>
-
-                <p className="text-sm underline mt-2 cursor-pointer">
-                  Plus d'infos
+                <p className="text-sm text-gray-400 mt-1">
+                  {new Date(event.date).toLocaleDateString("fr-FR", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
+
+               
               </div>
 
-              {/* RIGHT SIDE (BUTTON) */}
               <button
                 onClick={() => router.push(`/events/${event.id}`)}
                 className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-black transition"
