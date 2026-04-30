@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 export const eventAtom = atom({
+  id: null,
   title: "",
   description: "",
   date: "",

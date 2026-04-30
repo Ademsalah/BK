@@ -50,75 +50,95 @@ export default function CreateEvent() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4">
-      {/* Glass Card */}
-      <div className="w-full max-w-2xl backdrop-blur-xl bg-white/60 border border-white/40 shadow-2xl rounded-3xl p-8">
-        {/* Header */}
-        <div className="mb-6 text-center">
-          <h1 className="text-3xl font-bold text-gray-800">
-            ✨ Create Your Event
-          </h1>
-          <p className="text-gray-500 mt-2 text-sm">
-            Fill the details and bring your event to life
-          </p>
-        </div>
+ return (
+  <div className="min-h-screen p-8 bg-white flex items-center justify-center">
+    {/* Card */}
+    <div className="w-full max-w-2xl rounded-2xl bg-slate-700 shadow-2xl p-8 border border-white/10">
 
-        {/* Inputs */}
-        <div className="space-y-4">
-          <Input
-            name="title"
-            control={control}
-            label="Title"
-            placeholder="Amazing concert..."
-          />
-          <Input
-            name="description"
-            control={control}
-            label="Description"
-            placeholder="What is your event about?"
-          />
-
-          <div className="grid grid-cols-2 gap-4">
-            <Input name="date" control={control} label="Date" type="date" />
-            <Input
-              name="location"
-              control={control}
-              label="Location"
-              placeholder="Tunis..."
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <Input
-              name="capacity"
-              control={control}
-              label="Capacity"
-              type="number"
-            />
-            <Input
-              name="ticketPrice"
-              control={control}
-              label="Ticket"
-              type="number"
-            />
-            <Input
-              name="totalBudget"
-              control={control}
-              label="Budget"
-              type="number"
-            />
-          </div>
-        </div>
-
-        {/* Button */}
-        <button
-          onClick={handleSubmit(onSubmit)}
-          className="mt-8 w-full py-3 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold shadow-lg hover:scale-[1.02] active:scale-[0.98] transition"
-        >
-          Continue →
-        </button>
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold text-white">
+          Créer un événement
+        </h1>
+        <p className="text-gray-300 text-sm mt-2">
+          Remplissez les informations pour créer votre événement
+        </p>
       </div>
+
+      {/* Inputs */}
+      <div className="space-y-5">
+
+        <Input
+          name="title"
+          control={control}
+          label="Titre"
+          placeholder="Concert incroyable..."
+          className="bg-white text-gray-900"
+        />
+
+        <Input
+          name="description"
+          control={control}
+          label="Description"
+          placeholder="De quoi parle votre événement ?"
+          className="bg-white text-gray-900"
+        />
+
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            name="date"
+            control={control}
+            label="Date"
+            type="date"
+            className="bg-white text-gray-900"
+          />
+
+          <Input
+            name="location"
+            control={control}
+            label="Lieu"
+            placeholder="Tunis..."
+            className="bg-white text-gray-900"
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <Input
+            name="capacity"
+            control={control}
+            label="Capacité"
+            type="number"
+            className="bg-white text-gray-900"
+          />
+
+          <Input
+            name="ticketPrice"
+            control={control}
+            label="Prix billet"
+            type="number"
+            className="bg-white text-gray-900"
+          />
+
+          <Input
+            name="totalBudget"
+            control={control}
+            label="Budget total"
+            type="number"
+            className="bg-white text-gray-900"
+          />
+        </div>
+
+      </div>
+
+      {/* Button */}
+      <button
+        onClick={handleSubmit(onSubmit)}
+        className="mt-8 w-full py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg transition"
+      >
+        Continuer →
+      </button>
+
     </div>
-  );
+  </div>
+);
 }

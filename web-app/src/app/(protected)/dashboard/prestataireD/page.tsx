@@ -14,7 +14,6 @@ export default function PrestataireD() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "banned">("all");
 
-  // ✅ MODALS
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showBanModal, setShowBanModal] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -22,18 +21,15 @@ export default function PrestataireD() {
     null,
   );
 
-  // pagination (RESTORED)
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
-  // 📥 FETCH
   const fetchPrestataires = async () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:5000/prestataires");
       setUsers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error(err);
       toast.error("Erreur lors du chargement");
       setUsers([]);
     } finally {
@@ -45,7 +41,6 @@ export default function PrestataireD() {
     fetchPrestataires();
   }, []);
 
-  // 🚫 BAN / UNBAN (ONLY AFTER CONFIRMATION)
   const confirmBanAction = async () => {
     if (!selectedId) return;
 
@@ -60,18 +55,15 @@ export default function PrestataireD() {
         ),
       );
 
-      toast.success(
-        res.data.banned ? "Prestataire banni 🚫" : "Prestataire débanni ✅",
-      );
+      toast.success(res.data.banned ? "Prestataire banni 🚫" : "Prestataire débanni ✅");
 
       setShowBanModal(false);
       setSelectedId(null);
-    } catch (err) {
+    } catch {
       toast.error("Action échouée");
     }
   };
 
-  // 🗑 DELETE (FIXED)
   const confirmDelete = async () => {
     if (!selectedId) return;
 
@@ -84,7 +76,7 @@ export default function PrestataireD() {
 
       setShowDeleteModal(false);
       setSelectedId(null);
-    } catch (err) {
+    } catch {
       toast.error("Suppression échouée");
     }
   };
@@ -100,7 +92,6 @@ export default function PrestataireD() {
       .join("")
       .toUpperCase();
 
-  // 🔍 FILTER
   const filtered = useMemo(() => {
     return users.filter((u) => {
       const matchSearch =
@@ -114,81 +105,77 @@ export default function PrestataireD() {
     });
   }, [users, search, filter]);
 
-  // 📊 STATS
-  const stats = useMemo(() => {
-    return {
-      total: users.length,
-      active: users.filter((u) => !u.banned).length,
-      banned: users.filter((u) => u.banned).length,
-    };
-  }, [users]);
-
-  // 📄 PAGINATION (RESTORED EXACT LOGIC)
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const current = filtered.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
-  if (loading) return <p className="p-6">Loading...</p>;
+  if (loading)
+    return <p className="p-8 text-gray-400 animate-pulse">Loading...</p>;
 
   return (
-    <div className="min-h-screen p-6">
-      <h1 className="text-3xl font-bold mb-4">Prestataires</h1>
+    <div className="min-h-screen p-8 bg-white">
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
+          Prestataires
+        </h1>
 
-      {/* STATS */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-[#2a1845] text-white rounded-xl">
-          Total: {stats.total}
-        </div>
-        <div className="p-4 bg-[#2a1845] text-green-400 rounded-xl">
-          Actifs: {stats.active}
-        </div>
-        <div className="p-4 bg-[#2a1845] text-red-400 rounded-xl">
-          Bannis: {stats.banned}
-        </div>
+        <button
+          onClick={() => router.push("/dashboard/prestataireD/create")}
+          className="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition"
+        >
+          + Créer
+        </button>
       </div>
 
-      {/* SEARCH */}
-      <input
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setCurrentPage(1);
-        }}
-        placeholder="Rechercher..."
-        className="w-full mb-4 px-4 py-2 bg-[#2a1845] text-white rounded-md"
-      />
+      {/* SEARCH + FILTER */}
+     <div className="flex flex-col md:flex-row gap-4 mb-8">
+  <input
+    value={search}
+    onChange={(e) => {
+      setSearch(e.target.value);
+      setCurrentPage(1);
+    }}
+    placeholder="Rechercher..."
+    className="flex-1 px-4 py-2 rounded-xl bg-white border border-gray-400 text-gray-900 placeholder-gray-300 outline-none"
+  />
 
-      {/* FILTER */}
-      <div className="flex gap-2 mb-6">
-        {(["all", "active", "banned"] as const).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-md ${
-              filter === f ? "bg-red-600" : "bg-[#2a1845]"
-            } text-white`}
-          >
-            {f.toUpperCase()}
-          </button>
-        ))}
-      </div>
-
+  <div className="flex gap-2 flex-wrap">
+    {(["all", "active", "banned"] as const).map((f) => (
+      <button
+        key={f}
+        onClick={() => setFilter(f)}
+        className={`px-4 py-2 rounded-full text-sm transition ${
+          filter === f
+            ? "bg-red-600 text-white"
+            : "bg-gray-900 text-white hover:bg-red-600"
+        }`}
+      >
+        {f.toUpperCase()}
+      </button>
+    ))}
+  </div>
+</div>
       {/* GRID */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {current.map((p) => (
-          <div key={p.id} className="p-5 bg-[#2a1845] text-white rounded-xl">
-            <div className="flex gap-3">
-              <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold">
+          <div
+            key={p.id}
+            className="group rounded-2xl p-6 shadow-lg border border-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-slate-700"
+          >
+            <div className="flex gap-3 items-center">
+              <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold text-white">
                 {getInitials(p.name)}
               </div>
+
               <div>
-                <p className="font-semibold">{p.name}</p>
-                <p className="text-sm text-gray-300">{p.email}</p>
+                <p className="text-white font-semibold">{p.name}</p>
+                <p className="text-gray-300 text-sm">{p.email}</p>
               </div>
             </div>
 
-            <div className="mt-3">
+            <div className="mt-4">
               {p.banned ? (
                 <span className="text-red-400">BANNI</span>
               ) : (
@@ -196,75 +183,95 @@ export default function PrestataireD() {
               )}
             </div>
 
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-2 mt-5 flex-wrap">
               <button
                 onClick={() => handleUpdate(p.id)}
-                className="px-3 py-1 bg-white/10 rounded-md"
+                className="px-3 py-1 rounded-full bg-white/10 text-white hover:bg-white/20 transition"
               >
                 Modifier
               </button>
 
-              {/* BAN BUTTON → OPENS MODAL */}
               <button
                 onClick={() => {
                   setSelectedId(p.id);
                   setShowBanModal(true);
                   setPendingAction(p.banned ? "unban" : "ban");
                 }}
-                className={`px-3 py-1 rounded-md ${
+                className={`px-3 py-1 rounded-full text-white transition ${
                   p.banned ? "bg-green-600" : "bg-red-600"
                 }`}
               >
                 {p.banned ? "Débannir" : "Bannir"}
               </button>
 
-              {/* DELETE */}
               <button
                 onClick={() => {
                   setSelectedId(p.id);
                   setShowDeleteModal(true);
                 }}
-                className="px-3 py-1 bg-red-700 rounded-md"
+                className="px-3 py-1 rounded-full bg-red-700 text-white"
               >
                 Supprimer
               </button>
             </div>
+
+            <div className="mt-5 h-1 w-0 bg-red-500 rounded-full group-hover:w-full transition-all duration-300"></div>
           </div>
         ))}
       </div>
 
-      {/* PAGINATION (UNCHANGED) */}
-      <div className="flex justify-center mt-6 gap-2">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-3 py-1 ${
-              currentPage === i + 1 ? "bg-red-600" : "bg-[#2a1845]"
-            } text-white rounded`}
-          >
-            {i + 1}
-          </button>
-        ))}
+      {/* PAGINATION */}
+      <div className="flex justify-center items-center gap-3 mt-12 flex-wrap">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-4 py-2 rounded-full text-white bg-gray-900 hover:bg-red-600 disabled:opacity-40 transition"
+        >
+          ←
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => {
+          const page = i + 1;
+          const isActive = currentPage === page;
+
+          return (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 rounded-full text-sm transition ${
+                isActive
+                  ? "bg-red-600 text-white scale-110"
+                  : "bg-gray-900 text-white hover:bg-red-600"
+              }`}
+            >
+              {page}
+            </button>
+          );
+        })}
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-4 py-2 rounded-full text-white bg-gray-900 hover:bg-red-600 disabled:opacity-40 transition"
+        >
+          →
+        </button>
       </div>
 
-      {/* DELETE MODAL */}
+      {/* MODALS (unchanged logic, same UI style not forced here) */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
           <div className="bg-white p-6 rounded-xl w-[320px]">
             <h2 className="text-lg font-bold mb-2">Confirmation</h2>
-            <p>Êtes-vous sûr de vouloir supprimer ce prestataire ?</p>
+            <p>Supprimer ce prestataire ?</p>
 
             <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-3 py-1"
-              >
+              <button onClick={() => setShowDeleteModal(false)}>
                 Annuler
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-3 py-1 bg-red-600 text-white rounded"
+                className="bg-red-600 text-white px-3 py-1 rounded"
               >
                 Supprimer
               </button>
@@ -273,30 +280,20 @@ export default function PrestataireD() {
         </div>
       )}
 
-      {/* BAN MODAL */}
       {showBanModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
           <div className="bg-white p-6 rounded-xl w-[320px]">
             <h2 className="text-lg font-bold mb-2">Confirmation</h2>
-
             <p>
-              Êtes-vous sûr de vouloir{" "}
-              <b>{pendingAction === "ban" ? "bannir" : "débannir"}</b> ce
-              prestataire ?
+              Confirmer{" "}
+              <b>{pendingAction === "ban" ? "bannir" : "débannir"}</b> ?
             </p>
 
             <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setShowBanModal(false)}
-                className="px-3 py-1"
-              >
-                Annuler
-              </button>
+              <button onClick={() => setShowBanModal(false)}>Annuler</button>
               <button
                 onClick={confirmBanAction}
-                className={`px-3 py-1 text-white rounded ${
-                  pendingAction === "ban" ? "bg-red-600" : "bg-green-600"
-                }`}
+                className="bg-red-600 text-white px-3 py-1 rounded"
               >
                 Confirmer
               </button>

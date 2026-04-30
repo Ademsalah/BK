@@ -8,6 +8,8 @@ type Props = {
   label?: string;
   type?: string;
   placeholder?: string;
+  className?: string; // ✅ added
+  labelClassName?: string;
 };
 
 export default function Input({
@@ -16,26 +18,30 @@ export default function Input({
   label,
   type = "text",
   placeholder,
+  className = "",
+  labelClassName = "",
 }: Props) {
   return (
     <Controller
       name={name}
       control={control}
-      defaultValue="" 
+      defaultValue=""
       render={({ field, fieldState }) => (
         <div className="flex flex-col gap-1 w-full">
           {label && (
-            <label className="text-black">
+            <label className={`text-sm font-medium ${labelClassName}`}>
               {label}
             </label>
           )}
-
           <input
             {...field}
-            value={field.value ?? ""} 
+            value={field.value ?? ""}
             type={type}
             placeholder={placeholder}
-            className="px-4 py-2 rounded-full border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className={`px-4 py-2 rounded-xl border border-gray-300 
+              focus:outline-none focus:ring-2 focus:ring-red-500 
+              placeholder-gray-400 text-gray-900 transition
+              ${className}`}
           />
 
           {fieldState.error && (

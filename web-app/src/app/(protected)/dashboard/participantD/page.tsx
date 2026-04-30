@@ -13,7 +13,6 @@ export default function ParticipantD() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "banned">("all");
 
-  // 📥 FETCH (backend fully responsible)
   const fetchParticipants = async (pageNumber = 1, searchValue = "") => {
     try {
       setLoading(true);
@@ -32,12 +31,10 @@ export default function ParticipantD() {
     }
   };
 
-  // initial load
   useEffect(() => {
     fetchParticipants(1, "");
   }, []);
 
-  // 🔍 SEARCH (reset page)
   useEffect(() => {
     const delay = setTimeout(() => {
       fetchParticipants(1, search);
@@ -46,21 +43,20 @@ export default function ParticipantD() {
     return () => clearTimeout(delay);
   }, [search]);
 
-  // 🚫 BAN / UNBAN (SYNC WITH BACKEND)
   const toggleBan = async (id: number) => {
     try {
       const res = await axios.patch(
         `http://localhost:5000/participants/participants/${id}/ban`,
       );
 
-      // update from backend response (IMPORTANT FIX)
-      setParticipants((prev) => prev.map((p) => (p.id === id ? res.data : p)));
+      setParticipants((prev) =>
+        prev.map((p) => (p.id === id ? res.data : p)),
+      );
     } catch (err) {
       console.error(err);
     }
   };
 
-  // 👤 initials
   const getInitials = (name = "") =>
     name
       .split(" ")
@@ -68,14 +64,12 @@ export default function ParticipantD() {
       .join("")
       .toUpperCase();
 
-  // 🔥 FILTER (frontend only display logic)
   const filteredParticipants = useMemo(() => {
     if (filter === "active") return participants.filter((p) => !p.banned);
     if (filter === "banned") return participants.filter((p) => p.banned);
     return participants;
   }, [participants, filter]);
 
-  // 📊 STATS (based on backend data)
   const stats = useMemo(() => {
     const total = participants.length;
     const banned = participants.filter((p) => p.banned).length;
@@ -85,40 +79,28 @@ export default function ParticipantD() {
   }, [participants]);
 
   if (loading) {
-    return <p className="p-6 text-gray-500">Loading...</p>;
+    return <p className="p-8 text-gray-400 animate-pulse">Loading...</p>;
   }
 
   return (
-    <div className="min-h-screen p-6">
-      {/* TITLE */}
-      <h1 className="text-3xl font-bold text-black mb-4">Participants</h1>
-
-      {/* 📊 STATS */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="p-4 rounded-xl text-white bg-[#2a1845]">
-          <p className="text-sm text-gray-300">Total</p>
-          <p className="text-2xl font-bold">{stats.total}</p>
-        </div>
-
-        <div className="p-4 rounded-xl text-white bg-[#2a1845]">
-          <p className="text-sm text-gray-300">Actifs</p>
-          <p className="text-2xl font-bold text-green-400">{stats.active}</p>
-        </div>
-
-        <div className="p-4 rounded-xl text-white bg-[#2a1845]">
-          <p className="text-sm text-gray-300">Bannis</p>
-          <p className="text-2xl font-bold text-red-400">{stats.banned}</p>
-        </div>
+    <div className="min-h-screen p-8 bg-white">
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
+          Participants
+        </h1>
       </div>
 
+    
+
       {/* SEARCH + FILTER */}
-      <div className="flex flex-col md:flex-row gap-3 mb-6">
+      <div className="flex flex-col md:flex-row gap-4 mb-8">
         <input
           type="text"
           placeholder="Search participants..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 rounded-md bg-[#2a1845] text-white placeholder-gray-300 border border-white/10 focus:border-red-500 outline-none"
+          className="flex-1 px-4 py-2 rounded-xl bg-white border border-gray-400 text-gray-900 placeholder-gray-300 outline-none"
         />
 
         <div className="flex gap-2">
@@ -126,10 +108,10 @@ export default function ParticipantD() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-md transition border border-white/10 ${
+              className={`px-4 py-2 rounded-full text-sm transition ${
                 filter === f
                   ? "bg-red-600 text-white"
-                  : "bg-[#2a1845] text-white hover:bg-[#3a235f]"
+                  : "bg-gray-900 text-white hover:bg-red-600"
               }`}
             >
               {f.toUpperCase()}
@@ -138,44 +120,52 @@ export default function ParticipantD() {
         </div>
       </div>
 
+       <div className="flex gap-2 flex-wrap mb-8">
+  <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
+    <span>Total</span>
+    <span className="font-bold">{stats.total}</span>
+  </div>
+
+  <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
+    <span>Actifs</span>
+    <span className="font-bold text-green-400">{stats.active}</span>
+  </div>
+
+  <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
+    <span>Bannis</span>
+    <span className="font-bold text-red-400">{stats.banned}</span>
+  </div>
+</div>
       {/* GRID */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredParticipants.map((p) => (
           <div
             key={p.id}
-            className="rounded-2xl p-5 border border-white/10 shadow-lg"
-            style={{ backgroundColor: "#2a1845" }}
+            className="group rounded-2xl p-6 shadow-lg border border-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-slate-700"
           >
-            {/* Avatar */}
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white font-bold">
+              <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">
                 {getInitials(p.name)}
               </div>
 
               <div>
                 <h2 className="text-white font-semibold">{p.name}</h2>
-                <p className="text-gray-400 text-sm">{p.email}</p>
+                <p className="text-gray-300 text-sm">{p.email}</p>
               </div>
             </div>
 
-            {/* STATUS */}
             <div className="mt-4">
               {p.banned ? (
-                <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
-                  🚫 Banni
-                </span>
+                <span className="text-red-400">BANNI</span>
               ) : (
-                <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
-                  ✅ Actif
-                </span>
+                <span className="text-green-400">ACTIF</span>
               )}
             </div>
 
-            {/* ACTION */}
             <div className="mt-5">
               <button
                 onClick={() => toggleBan(p.id)}
-                className={`px-4 py-2 rounded-md text-white transition ${
+                className={`px-4 py-2 rounded-full text-white transition ${
                   p.banned
                     ? "bg-green-600 hover:bg-green-700"
                     : "bg-red-600 hover:bg-red-700"
@@ -184,19 +174,22 @@ export default function ParticipantD() {
                 {p.banned ? "Débannir" : "Bannir"}
               </button>
             </div>
+
+            {/* accent line like EventsD */}
+            <div className="mt-6 h-1 w-0 bg-red-500 rounded-full group-hover:w-full transition-all duration-300"></div>
           </div>
         ))}
       </div>
 
-      {/* PAGINATION */}
+      {/* PAGINATION (kept logic, only UI restyled) */}
       {pagination && (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className="flex justify-center items-center gap-3 mt-12 flex-wrap">
           <button
             disabled={page === 1}
             onClick={() => fetchParticipants(page - 1, search)}
-            className="px-4 py-2 rounded-md text-white bg-[#2a1845] hover:bg-[#3a235f] disabled:opacity-40 transition"
+            className="px-4 py-2 rounded-full text-white bg-gray-900 hover:bg-red-600 disabled:opacity-40 transition"
           >
-            Prev
+            ←
           </button>
 
           {Array.from({ length: pagination.totalPages }, (_, i) => {
@@ -207,10 +200,10 @@ export default function ParticipantD() {
               <button
                 key={pageNumber}
                 onClick={() => fetchParticipants(pageNumber, search)}
-                className={`px-4 py-2 rounded-md border border-white/10 transition ${
+                className={`px-4 py-2 rounded-full text-sm transition ${
                   isActive
-                    ? "bg-red-600 text-white shadow-md scale-105"
-                    : "bg-[#2a1845] text-white hover:bg-[#3a235f]"
+                    ? "bg-red-600 text-white scale-110"
+                    : "bg-gray-900 text-white hover:bg-red-600"
                 }`}
               >
                 {pageNumber}
@@ -221,9 +214,9 @@ export default function ParticipantD() {
           <button
             disabled={page === pagination.totalPages}
             onClick={() => fetchParticipants(page + 1, search)}
-            className="px-4 py-2 rounded-md text-white bg-[#2a1845] hover:bg-[#3a235f] disabled:opacity-40 transition"
+            className="px-4 py-2 rounded-full text-white bg-gray-900 hover:bg-red-600 disabled:opacity-40 transition"
           >
-            Next
+            →
           </button>
         </div>
       )}

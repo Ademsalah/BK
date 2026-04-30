@@ -52,8 +52,7 @@ export default function ServicesSection() {
           return (
             <div
               key={index}
-              className=" bg-white border border-gray-100 rounded-2xl p-8 text-center
-              shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+              className=" bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
             >
               {/* ICON */}
               <div className="flex justify-center mb-6">

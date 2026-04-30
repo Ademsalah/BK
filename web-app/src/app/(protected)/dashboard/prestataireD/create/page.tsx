@@ -6,6 +6,7 @@ import axios from "axios";
 import { prestataireSchema } from "./prestataireSchema";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function CreatePrestatairePage() {
   const [token, setToken] = useState("");
@@ -58,7 +59,7 @@ export default function CreatePrestatairePage() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        alert("Prestataire updated ✅");
+        toast.success("Prestataire modifié avec successe ");
       } else {
         // ➕ CREATE
         await axios.post(
@@ -69,7 +70,7 @@ export default function CreatePrestatairePage() {
           //   },
         );
 
-        alert("Prestataire created ✅");
+       toast.success("Prestataire créé avec successe ");
       }
 
       router.push("/dashboard/prestataireD");
@@ -81,82 +82,132 @@ export default function CreatePrestatairePage() {
     }
   };
 
-  return (
-    <div className="max-w-2xl mx-auto mt-10 bg-black p-6 rounded-xl shadow">
-      <h1 className="text-2xl font-bold mb-6 text-white">
-        {isEdit ? "Update Prestataire" : "Create Prestataire"}
+ return (
+  <div className="min-h-screen p-8 bg-white flex justify-center">
+    <div className="w-full max-w-2xl rounded-2xl bg-slate-700 shadow-2xl p-8 border border-white/10">
+
+      {/* HEADER */}
+      <h1 className="text-3xl font-bold text-white mb-8 text-center">
+        {isEdit ? "Modifier le prestataire" : "Créer un prestataire"}
       </h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-        <input {...register("name")} placeholder="Name" className="input" />
-        <p className="text-red-500">{errors.name?.message}</p>
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
 
-        <input {...register("email")} placeholder="Email" className="input" />
-        <p className="text-red-500">{errors.email?.message}</p>
-
-        {/* password only on create */}
-        {/* {!isEdit && (
+        {/* NAME */}
+        <div>
+          <label className="text-white text-sm mb-1 block">Nom</label>
           <input
-            type="password"
-            {...register("password")}
-            placeholder="Temporary Password"
-            className="input"
+            {...register("name")}
+            placeholder="Nom"
+            className="w-full px-4 py-2 rounded-xl bg-white text-gray-900 outline-none"
           />
-        )} */}
+          <p className="text-red-400 text-sm mt-1">{errors.name?.message}</p>
+        </div>
 
-        <select {...register("category")} className="input">
-          <option value="">Select Category</option>
-          <option value="MUSICIEN">MUSICIEN</option>
-          <option value="TRAITEUR">TRAITEUR</option>
-          <option value="SALLE">SALLE</option>
-          <option value="DECORATION">DECORATION</option>
-        </select>
-        <p className="text-red-500">{errors.category?.message}</p>
-
-        <div className="flex gap-2">
+        {/* EMAIL */}
+        <div>
+          <label className="text-white text-sm mb-1 block">Email</label>
           <input
-            type="number"
-            {...register("priceMin")}
-            placeholder="Min Price"
-            className="input"
+            {...register("email")}
+            placeholder="Email"
+            className="w-full px-4 py-2 rounded-xl bg-white text-gray-900 outline-none"
           />
+          <p className="text-red-400 text-sm mt-1">{errors.email?.message}</p>
+        </div>
 
+        {/* CATEGORY */}
+        <div>
+          <label className="text-white text-sm mb-1 block">
+            Catégorie
+          </label>
+
+          <select
+            {...register("category")}
+            className="w-full px-4 py-2 rounded-xl bg-white text-gray-900 outline-none"
+          >
+            <option value="">Sélectionner une catégorie</option>
+            <option value="MUSICIEN">🎧 Musicien</option>
+            <option value="TRAITEUR">🍽️ Traiteur</option>
+            <option value="SALLE">🏛️ Salle</option>
+            <option value="DECORATION">🎨 Décoration</option>
+          </select>
+
+          <p className="text-red-400 text-sm mt-1">
+            {errors.category?.message}
+          </p>
+        </div>
+
+        {/* PRICES */}
+        <div className="grid grid-cols-2 gap-4">
+
+          <div>
+            <label className="text-white text-sm mb-1 block">
+              Prix minimum
+            </label>
+            <input
+              type="number"
+              {...register("priceMin")}
+              className="w-full px-4 py-2 rounded-xl bg-white text-gray-900 outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="text-white text-sm mb-1 block">
+              Prix maximum
+            </label>
+            <input
+              type="number"
+              {...register("priceMax")}
+              className="w-full px-4 py-2 rounded-xl bg-white text-gray-900 outline-none"
+            />
+          </div>
+
+        </div>
+
+        {/* LOCATION */}
+        <div>
+          <label className="text-white text-sm mb-1 block">Lieu</label>
           <input
-            type="number"
-            {...register("priceMax")}
-            placeholder="Max Price"
-            className="input"
+            {...register("location")}
+            placeholder="Lieu"
+            className="w-full px-4 py-2 rounded-xl bg-white text-gray-900 outline-none"
           />
         </div>
 
-        <input
-          {...register("location")}
-          placeholder="Location"
-          className="input"
-        />
+        {/* DESCRIPTION */}
+        <div>
+          <label className="text-white text-sm mb-1 block">
+            Description
+          </label>
+          <textarea
+            {...register("description")}
+            placeholder="Description"
+            className="w-full px-4 py-2 rounded-xl bg-white text-gray-900 outline-none"
+          />
+        </div>
 
-        <textarea
-          {...register("description")}
-          placeholder="Description"
-          className="input"
-        />
+        {/* RATING */}
+        <div>
+          <label className="text-white text-sm mb-1 block">Note</label>
+          <input
+            type="number"
+            step="0.1"
+            {...register("rating")}
+            className="w-full px-4 py-2 rounded-xl bg-white text-gray-900 outline-none"
+          />
+        </div>
 
-        <input
-          type="number"
-          step="0.1"
-          {...register("rating")}
-          placeholder="Rating"
-          className="input"
-        />
-
+        {/* BUTTON */}
         <button
           type="submit"
           disabled={isSubmitting || loading}
-          className="bg-blue-600 text-white py-2 rounded"
+          className="mt-4 w-full py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-50"
         >
-          {isEdit ? "Update Prestataire" : "Create Prestataire"}
+          {isEdit ? "Mettre à jour" : "Créer le prestataire"}
         </button>
+
       </form>
     </div>
-  );
+  </div>
+);
 }
