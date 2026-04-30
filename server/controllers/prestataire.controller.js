@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 const { sendPrestataireEmail } = require("../utils/mailer");
 
 const User = db.User;
-const Prestataire = db.Prestataire;
+const PrestataireProfile = db.PrestataireProfile;
+
 function generateTempPassword() {
   return Math.random().toString(36).slice(-8);
 }
@@ -35,7 +36,7 @@ exports.createPrestataire = async (req, res) => {
     });
 
     // 2. Create profile
-    const profile = await Prestataire.create({
+    const profile = await PrestataireProfile.create({
       userId: user.id,
       category,
       priceMin,
@@ -68,7 +69,7 @@ exports.getAllPrestataires = async (req, res) => {
 
     const result = await Promise.all(
       users.map(async (user) => {
-        const profile = await Prestataire.findOne({
+        const profile = await PrestataireProfile.findOne({
           where: { userId: user.id },
           attributes: {
             exclude: ["createdAt", "updatedAt"],
@@ -110,7 +111,7 @@ exports.getPrestataireByUserId = async (req, res) => {
       return res.status(404).json({ message: "Prestataire not found" });
     }
 
-    const profile = await Prestataire.findOne({
+    const profile = await PrestataireProfile.findOne({
       where: { userId: user.id },
     });
 
@@ -159,7 +160,7 @@ exports.updatePrestataire = async (req, res) => {
     });
 
     // update profile
-    const profile = await Prestataire.findOne({
+    const profile = await PrestataireProfile.findOne({
       where: { userId: user.id },
     });
 
@@ -193,7 +194,7 @@ exports.deletePrestataire = async (req, res) => {
     }
 
     // delete profile first
-    await Prestataire.destroy({
+    await PrestataireProfile.destroy({
       where: { userId: user.id },
     });
 

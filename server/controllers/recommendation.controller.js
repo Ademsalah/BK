@@ -1,5 +1,5 @@
 const db = require("../models");
-const Prestataire = db.Prestataire;
+const PrestataireProfile = db.PrestataireProfile;
 
 const CATEGORY_WEIGHTS = {
   TRAITEUR: 0.35,
@@ -8,103 +8,146 @@ const CATEGORY_WEIGHTS = {
   DECORATION: 0.15,
 };
 
+// 🔥 helper
+function getCombinations(arr, k) {
+  const result = [];
+
+  function helper(start, combo) {
+    if (combo.length === k) {
+      result.push([...combo]);
+      return;
+    }
+
+    for (let i = start; i < arr.length; i++) {
+      combo.push(arr[i]);
+      helper(i + 1, combo);
+      combo.pop();
+    }
+  }
+
+  helper(0, []);
+  return result;
+}
+
 exports.recommendTeams = async (req, res) => {
   try {
     const { budget, categories, location } = req.body;
 
-    if (!budget || !categories?.length || !location) {
+    // ✅ FIX 1: categories is now OBJECT not array
+    if (!budget || !categories || !location) {
       return res.status(400).json({
         message: "budget, location, categories required",
       });
     }
 
-    // 1. Fetch all prestataires for selected categories
-    const prestataires = await Prestataire.findAll({
+    const categoryKeys = Object.keys(categories);
+
+    // ✅ FIX 2: fetch correctly
+    const prestataires = await PrestataireProfile.findAll({
       where: {
-        category: categories,
+        category: categoryKeys,
       },
+       include: [
+    {
+      model: db.User,
+      attributes: ["id", "name", "email"], // 👈 what you need
+    },
+  ],
     });
 
-    // 2. Group by category
+    // Group by category
     const grouped = {};
     for (const p of prestataires) {
       if (!grouped[p.category]) grouped[p.category] = [];
       grouped[p.category].push(p);
     }
 
-    // 3. If missing a category → impossible to build team
-    for (const cat of categories) {
-      if (!grouped[cat] || grouped[cat].length === 0) {
+    // ✅ FIX 3: check quantity per category
+    for (const cat of categoryKeys) {
+      if (!grouped[cat] || grouped[cat].length < categories[cat]) {
         return res.json({
-          message: `No prestataires found for ${cat}`,
+          message: `Not enough prestataires for ${cat}`,
         });
       }
     }
 
-    // 4. Generate combinations (LIMITED for performance)
+    // 🔥 STEP: generate combinations per category
+    const categoryCombinations = {};
+
+    for (const cat of categoryKeys) {
+      const list = grouped[cat]
+        .sort((a, b) => b.rating - a.rating) // better quality first
+        .slice(0, 6); // LIMIT (important for performance)
+
+      const count = categories[cat];
+
+      categoryCombinations[cat] = getCombinations(list, count);
+    }
+
+    // 🔥 STEP: build teams dynamically
     const teams = [];
 
-    const salleList = grouped["SALLE"] || [];
-    const traiteurList = grouped["TRAITEUR"] || [];
-    const musicList = grouped["MUSICIEN"] || [];
-    const decoList = grouped["DECORATION"] || [];
+    function buildTeams(index, currentTeam) {
+      if (index === categoryKeys.length) {
+        teams.push([...currentTeam]);
+        return;
+      }
 
-    for (const salle of salleList.slice(0, 3)) {
-      for (const traiteur of traiteurList.slice(0, 3)) {
-        for (const music of musicList.slice(0, 3)) {
-          for (const deco of decoList.slice(0, 3)) {
-            const team = [salle, traiteur, music, deco];
+      const cat = categoryKeys[index];
 
-            // 5. Calculate total price
-            const totalPrice = team.reduce(
-              (sum, p) => sum + (p.priceMax || 0),
-              0,
-            );
-
-            // skip if over budget
-            if (totalPrice > budget) continue;
-
-            // 6. Score team
-            let score = 0;
-
-            for (const p of team) {
-              const budgetScore =
-                100 - (Math.abs(p.priceMax - budget / 4) / (budget / 4)) * 100;
-
-              const ratingScore = (p.rating / 5) * 100;
-
-              const locationScore =
-                p.location?.toLowerCase() === location.toLowerCase() ? 100 : 50;
-
-              const weight = CATEGORY_WEIGHTS[p.category] || 0.1;
-
-              const final =
-                (budgetScore * 0.5 + ratingScore * 0.3 + locationScore * 0.2) *
-                weight;
-
-              score += final;
-            }
-
-            teams.push({
-              team: {
-                salle,
-                traiteur,
-                musicien: music,
-                decoration: deco,
-              },
-              totalPrice,
-              score: Number(score.toFixed(2)),
-            });
-          }
-        }
+      for (const combo of categoryCombinations[cat]) {
+        buildTeams(index + 1, [...currentTeam, ...combo]);
       }
     }
 
-    // 7. Sort best teams
-    teams.sort((a, b) => b.score - a.score);
+    buildTeams(0, []);
 
-    // 8. Return top 5 teams
-    res.json(teams.slice(0, 5));
+    // 🔥 STEP: scoring
+    const scoredTeams = [];
+
+    for (const team of teams) {
+      const totalPrice = team.reduce(
+        (sum, p) => sum + (p.priceMax || 0),
+        0
+      );
+
+      if (totalPrice > budget) continue;
+
+      let score = 0;
+
+      for (const p of team) {
+        const ideal = budget / team.length;
+
+        const budgetScore =
+          100 - (Math.abs(p.priceMax - ideal) / ideal) * 100;
+
+        const ratingScore = (p.rating / 5) * 100;
+
+        const locationScore =
+          p.location?.toLowerCase() === location.toLowerCase()
+            ? 100
+            : 50;
+
+        const weight = CATEGORY_WEIGHTS[p.category] || 0.1;
+
+        score +=
+          (budgetScore * 0.5 +
+            ratingScore * 0.3 +
+            locationScore * 0.2) *
+          weight;
+      }
+
+      scoredTeams.push({
+        team,
+        totalPrice,
+        score: Number(score.toFixed(2)),
+      });
+    }
+
+    // Sort best
+    scoredTeams.sort((a, b) => b.score - a.score);
+
+    return res.json(scoredTeams.slice(0, 5));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

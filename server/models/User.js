@@ -19,9 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
     },
   });
-
   User.associate = (models) => {
-    User.hasOne(models.PrestataireProfile, { foreignKey: "userId" });
+    User.hasOne(models.PrestataireProfile, {
+      foreignKey: "userId",
+    });
+
     User.hasMany(models.Ticket, { foreignKey: "userId" });
     User.hasMany(models.Event, { foreignKey: "adminId" });
   };

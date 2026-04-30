@@ -19,20 +19,16 @@ db.sequelize = sequelize;
 
 // MODELS
 db.User = require("./user")(sequelize, DataTypes);
+db.PrestataireProfile = require("./PrestataireProfile")(sequelize, DataTypes);
 db.Event = require("./event")(sequelize, DataTypes);
-db.Prestataire = require("./PrestataireProfile")(sequelize, DataTypes);
 db.Ticket = require("./ticket")(sequelize, DataTypes);
 db.EventPrestataire = require("./eventPrestataire")(sequelize, DataTypes);
 
-// RELATIONS
-db.User.hasMany(db.Event, { foreignKey: "adminId" });
 
-db.User.hasOne(db.Prestataire, { foreignKey: "userId" });
-
-db.User.hasMany(db.Ticket, { foreignKey: "userId" });
-db.Event.hasMany(db.Ticket, { foreignKey: "eventId" });
-
-db.Event.hasMany(db.EventPrestataire, { foreignKey: "eventId" });
-db.Prestataire.hasMany(db.EventPrestataire, { foreignKey: "prestataireId" });
+Object.keys(db).forEach((model) => {
+  if (db[model].associate) {
+    db[model].associate(db);
+  }
+});
 
 module.exports = db;

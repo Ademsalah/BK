@@ -12,15 +12,15 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
   });
 
-  PrestataireProfile.associate = (models) => {
-    PrestataireProfile.belongsTo(models.User, {
-      foreignKey: "userId",
-    });
+ PrestataireProfile.associate = (models) => {
+  PrestataireProfile.belongsTo(models.User, {
+    foreignKey: "userId",
+  });
 
-    PrestataireProfile.hasMany(models.EventPrestataire, {
-      foreignKey: "prestataireId",
-    });
-  };
+  PrestataireProfile.hasMany(models.EventPrestataire, {
+    foreignKey: "prestataireId",
+  });
+};
 
   return PrestataireProfile;
 };

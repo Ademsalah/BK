@@ -1,5 +1,8 @@
 const db = require("../models");
 const Event = db.Event;
+const User = db.User;
+const EventPrestataire = db.EventPrestataire;
+const PrestataireProfile = db.PrestataireProfile;
 const { Op } = require("sequelize");
 // CREATE
 exports.createEvent = async (req, res) => {
@@ -79,8 +82,24 @@ exports.getEventById = async (req, res) => {
     const { id } = req.params;
 
     const event = await Event.findOne({
-      where: { id },
-    });
+  where: { id },
+  include: [
+    {
+      model: EventPrestataire,
+      include: [
+        {
+          model: PrestataireProfile,
+          include: [
+            {
+              model: User,
+              attributes: ["id", "name", "email", "role"],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
 
     if (!event) {
       return res.status(404).json({ message: "Event not found" });

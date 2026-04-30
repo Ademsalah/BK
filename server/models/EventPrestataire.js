@@ -1,10 +1,21 @@
-// models/EventPrestataire.js
 module.exports = (sequelize, DataTypes) => {
   const EventPrestataire = sequelize.define("EventPrestataire", {
     proposedPrice: DataTypes.FLOAT,
+
     status: {
       type: DataTypes.ENUM("PENDING", "ACCEPTED", "REFUSED"),
       defaultValue: "PENDING",
+    },
+
+    // 🔥 ADD THIS
+    eventId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+
+    prestataireId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   });
 
