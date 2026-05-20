@@ -23,7 +23,7 @@ exports.assign = async (req, res) => {
           proposedPrice: p.proposedPrice || p.priceMax || p.priceMin,
           status: "PENDING",
         },
-        { transaction }
+        { transaction },
       );
 
       created.push(assignment);
@@ -35,7 +35,6 @@ exports.assign = async (req, res) => {
       message: "Team assigned successfully",
       data: created,
     });
-
   } catch (err) {
     await transaction.rollback();
 
@@ -46,13 +45,81 @@ exports.assign = async (req, res) => {
 };
 
 exports.updateStatus = async (req, res) => {
+    const userId = req.params.id;
+
+  const profile = await db.PrestataireProfile.findOne({
+    where: { userId },
+  });
+
+  if (!profile) {
+    return res.status(404).json({ error: "Prestataire profile not found" });
+  }
   try {
     await EventPrestataire.update(
       { status: req.body.status },
-      { where: { id: req.params.id } },
+      { where: { prestataireid: profile.id } },
     );
 
     res.json({ message: "Updated status" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const { Op } = require("sequelize");
+
+exports.getEventsByPrestataire = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const profile = await db.PrestataireProfile.findOne({
+      where: { userId },
+    });
+
+    if (!profile) {
+      return res.status(404).json({ error: "Prestataire profile not found" });
+    }
+
+    // query params
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+
+    const offset = (page - 1) * limit;
+
+    const whereEvent = search
+      ? {
+          title: {
+            [Op.like]: `%${search}%`,
+          },
+        }
+      : {};
+
+    const { rows, count } = await db.EventPrestataire.findAndCountAll({
+      where: { prestataireId: profile.id },
+
+      include: [
+        {
+          model: db.Event,
+          where: whereEvent,
+          required: search ? true : false, // only filter join if searching
+        },
+      ],
+
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json({
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

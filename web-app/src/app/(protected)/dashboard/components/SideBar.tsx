@@ -4,16 +4,42 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
+type Role = "admin" | "prestataire";
+
+type MenuItem = {
+  name: string;
+  path: string;
+};
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+
   const [showModal, setShowModal] = useState(false);
 
-  const menuItems = [
-    { name: "Événements", path: "/dashboard/eventsD" },
-    { name: "Prestataires", path: "/dashboard/prestataireD" },
-    { name: "Participants", path: "/dashboard/participantD" },
-  ];
+  // Get role safely from localStorage
+  const storedRole = localStorage.getItem("role");
+
+  const role: Role =
+    storedRole === "ADMIN" || storedRole === "PRESTATAIRE"
+      ? storedRole
+      : "ADMIN";
+
+  // Sidebar items by role
+  const menuByRole: Record<Role, MenuItem[]> = {
+    ADMIN: [
+      { name: "Événements", path: "/dashboard/eventsD" },
+      { name: "Prestataires", path: "/dashboard/prestataireD" },
+      { name: "Participants", path: "/dashboard/participantD" },
+    ],
+
+    PRESTATAIRE: [
+      { name: "Mes événements", path: "/dashboard/myEvents" },
+      { name: "Mon profil", path: "/dashboard/profile" },
+    ],
+  };
+
+  const menuItems = menuByRole[role];
 
   const handleLogout = () => {
     localStorage.clear();
@@ -22,12 +48,12 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className="h-screen w-64 bg-gray-900 text-white fixed left-0 top-0 p-5 flex flex-col">
+      <aside className="fixed left-0 top-0 flex h-screen w-64 flex-col bg-gray-900 p-5 text-white">
         {/* Logo */}
-        <h1 className="text-2xl font-bold mb-8 text-red-600">Dashboard</h1>
+        <h1 className="mb-8 text-2xl font-bold text-red-600">Dashboard</h1>
 
         {/* Menu */}
-        <nav className="flex flex-col gap-3 flex-1">
+        <nav className="flex flex-1 flex-col gap-3">
           {menuItems.map((item) => {
             const isActive = pathname === item.path;
 
@@ -35,10 +61,10 @@ export default function Sidebar() {
               <Link
                 key={item.path}
                 href={item.path}
-                className={`px-4 py-2 rounded-md transition font-medium ${
+                className={`rounded-md px-4 py-2 font-medium transition ${
                   isActive
                     ? "bg-red-600 text-white"
-                    : "hover:bg-gray-700 text-gray-300"
+                    : "text-gray-300 hover:bg-gray-700"
                 }`}
               >
                 {item.name}
@@ -47,38 +73,38 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* Logout Button */}
+        {/* Logout */}
         <button
           onClick={() => setShowModal(true)}
-          className="mt-auto px-4 py-2 rounded-md bg-red-700 hover:bg-red-600 transition font-medium text-white"
+          className="mt-auto rounded-md bg-red-700 px-4 py-2 font-medium text-white transition hover:bg-red-600"
         >
           Logout
         </button>
       </aside>
 
-      {/* 🔥 MODAL */}
+      {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[320px] shadow-lg text-center">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="w-[320px] rounded-xl bg-white p-6 text-center shadow-lg">
+            <h2 className="mb-2 text-lg font-semibold text-gray-800">
               Are you sure?
             </h2>
 
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="mb-6 text-sm text-gray-500">
               You will be logged out of your account.
             </p>
 
-            <div className="flex justify-between gap-3">
+            <div className="flex gap-3">
               <button
                 onClick={() => setShowModal(false)}
-                className="flex-1 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700"
+                className="flex-1 rounded-md bg-gray-200 py-2 text-gray-700 hover:bg-gray-300"
               >
                 Cancel
               </button>
 
               <button
                 onClick={handleLogout}
-                className="flex-1 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white"
+                className="flex-1 rounded-md bg-red-600 py-2 text-white hover:bg-red-700"
               >
                 Logout
               </button>

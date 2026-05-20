@@ -17,7 +17,9 @@ app.use("/recommend", require("./routes/recommendation.routes"));
 app.use("/event-prestataires", require("./routes/eventPrestataire.routes"));
 app.use("/prestataires", require("./routes/prestataire.routes"));
 app.use("/participants", require("./routes/userRoutes"));
-db.sequelize.sync().then(() => {
+
+
+db.sequelize.sync({ alter: true }).then(() => {
   app.listen(5000, () => {
     console.log("🚀 Server running");
   });

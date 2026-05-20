@@ -9,8 +9,13 @@ module.exports = (sequelize, DataTypes) => {
     ticketPrice: DataTypes.FLOAT,
     capacity: DataTypes.INTEGER,
     status: {
-      type: DataTypes.ENUM("mawjoud", "mesh mawjoud"),
-      defaultValue: "mawjoud",
+      type: DataTypes.ENUM("disponoible", "non disponible"),
+      defaultValue: "disponoible",
+    },
+     photos: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: [],
     },
   });
 

@@ -36,7 +36,7 @@ export default function LoginPage() {
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
-
+      localStorage.setItem("userId", user.id);
       toast.success("Login successful 🎉");
 
       if (user.role === "ADMIN") {
@@ -44,7 +44,7 @@ export default function LoginPage() {
       } else if (user.role === "PARTICIPANT") {
         router.push("/home");
       } else if (user.role === "PRESTATAIRE") {
-        router.push("/prestataire");
+        router.push("/dashboard");
       } else {
         router.push("/");
       }
