@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-type Role = "admin" | "prestataire";
+type Role = "ADMIN" | "PRESTATAIRE";
 
 type MenuItem = {
   name: string;
@@ -16,30 +16,31 @@ export default function Sidebar() {
   const router = useRouter();
 
   const [showModal, setShowModal] = useState(false);
+  const [role, setRole] = useState<Role>("ADMIN");
 
-  // Get role safely from localStorage
-  const storedRole = localStorage.getItem("role");
+  // FIX: avoid localStorage error on SSR
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
 
-  const role: Role =
-    storedRole === "ADMIN" || storedRole === "PRESTATAIRE"
-      ? storedRole
-      : "ADMIN";
+    if (storedRole === "ADMIN" || storedRole === "PRESTATAIRE") {
+      setRole(storedRole);
+    }
+  }, []);
 
-  // Sidebar items by role
   const menuByRole: Record<Role, MenuItem[]> = {
     ADMIN: [
       { name: "Événements", path: "/dashboard/eventsD" },
       { name: "Prestataires", path: "/dashboard/prestataireD" },
       { name: "Participants", path: "/dashboard/participantD" },
+      { name: "Stats", path: "/dashboard/stats" }, // ✅ ADDED
     ],
 
     PRESTATAIRE: [
       { name: "Mes événements", path: "/dashboard/myEvents" },
       { name: "Mon profil", path: "/dashboard/profile" },
+      { name: "Stats", path: "/dashboard/stats" }, // optional
     ],
   };
-
-  const menuItems = menuByRole[role];
 
   const handleLogout = () => {
     localStorage.clear();
@@ -49,12 +50,11 @@ export default function Sidebar() {
   return (
     <>
       <aside className="fixed left-0 top-0 flex h-screen w-64 flex-col bg-gray-900 p-5 text-white">
-        {/* Logo */}
         <h1 className="mb-8 text-2xl font-bold text-red-600">Dashboard</h1>
 
-        {/* Menu */}
+        {/* MENU */}
         <nav className="flex flex-1 flex-col gap-3">
-          {menuItems.map((item) => {
+          {menuByRole[role].map((item) => {
             const isActive = pathname === item.path;
 
             return (
@@ -73,7 +73,7 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* Logout */}
+        {/* LOGOUT */}
         <button
           onClick={() => setShowModal(true)}
           className="mt-auto rounded-md bg-red-700 px-4 py-2 font-medium text-white transition hover:bg-red-600"
@@ -82,7 +82,7 @@ export default function Sidebar() {
         </button>
       </aside>
 
-      {/* Modal */}
+      {/* MODAL */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div className="w-[320px] rounded-xl bg-white p-6 text-center shadow-lg">

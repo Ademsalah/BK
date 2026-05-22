@@ -8,11 +8,12 @@ module.exports = (sequelize, DataTypes) => {
     totalBudget: DataTypes.FLOAT,
     ticketPrice: DataTypes.FLOAT,
     capacity: DataTypes.INTEGER,
+    bookedTickets: { type: DataTypes.INTEGER, defaultValue: 0 },
     status: {
       type: DataTypes.ENUM("disponoible", "non disponible"),
       defaultValue: "disponoible",
     },
-     photos: {
+    photos: {
       type: DataTypes.JSON,
       allowNull: true,
       defaultValue: [],

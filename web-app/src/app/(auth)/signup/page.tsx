@@ -7,8 +7,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema, SignupSchema } from "./signupSchema";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -33,6 +36,7 @@ export default function SignupPage() {
       });
 
       alert("Registration successful!");
+      router.push("/login");
     } catch (err) {
       console.error(err);
     }
