@@ -67,18 +67,11 @@ export default function Footer() {
             <input
               type="email"
               placeholder="Votre email"
-              className="
-      flex-1 px-4 py-3
-      text-sm text-white
-      bg-transparent
-      placeholder-white/60
-      outline-none
-      min-w-0
-    "
+              className="flex-1 px-4 py-3 text-sm text-white bg-transparent placeholder-white/60 outline-none min-w-0 "
             />
 
             <button
-              className="
+              className={`
       flex-shrink-0
       whitespace-nowrap
       px-6 py-3
@@ -86,7 +79,7 @@ export default function Footer() {
       text-sm font-semibold
       hover:bg-gray-100
       transition
-    "
+    `}
             >
               S’abonner
             </button>

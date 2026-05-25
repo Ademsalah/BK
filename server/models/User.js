@@ -18,15 +18,42 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+
+    // ===============================
+    // OTP RESET PASSWORD
+    // ===============================
+    otpCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    otpExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+
+    // OPTIONAL
+    mustChangePassword: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   });
+
   User.associate = (models) => {
     User.hasOne(models.PrestataireProfile, {
       foreignKey: "userId",
     });
 
-    User.hasMany(models.Ticket, { foreignKey: "userId" });
-    User.hasMany(models.Event, { foreignKey: "adminId" });
+    User.hasMany(models.Ticket, {
+      foreignKey: "userId",
+    });
+
+    User.hasMany(models.Event, {
+      foreignKey: "adminId",
+    });
   };
 
   return User;
 };
+
+

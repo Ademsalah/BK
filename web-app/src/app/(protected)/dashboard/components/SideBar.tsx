@@ -37,8 +37,7 @@ export default function Sidebar() {
 
     PRESTATAIRE: [
       { name: "Mes événements", path: "/dashboard/myEvents" },
-      { name: "Mon profil", path: "/dashboard/profile" },
-      { name: "Stats", path: "/dashboard/stats" }, // optional
+      { name: "Mon profil", path: "/dashboard/profil" },
     ],
   };
 

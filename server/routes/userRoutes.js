@@ -3,7 +3,7 @@ const router = express.Router();
 
 const controller = require("../controllers/userController");
 
-// PARTICIPANTS
+router.get("/user/:id", controller.getUserById);
 router.get("/participants", controller.getParticipants);
 router.get("/participants/:id", controller.getParticipantById);
 router.put("/participants/:id", controller.updateParticipant);

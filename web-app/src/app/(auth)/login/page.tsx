@@ -27,13 +27,10 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginSchema) => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/auth/login",
-        {
-          email: data.email,
-          password: data.password,
-        }
-      );
+      const res = await axios.post("http://localhost:5000/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
 
       const { token, user } = res.data;
 
@@ -45,9 +42,7 @@ export default function LoginPage() {
       toast.success("Login successful 🎉");
 
       // get saved redirect path
-      const redirectPath = localStorage.getItem(
-        "redirectAfterLogin"
-      );
+      const redirectPath = localStorage.getItem("redirectAfterLogin");
 
       // remove after use
       localStorage.removeItem("redirectAfterLogin");
@@ -70,8 +65,7 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       const message =
-        err?.response?.data?.message ||
-        "Invalid email or password";
+        err?.response?.data?.message || "Invalid email or password";
 
       toast.error(message);
     }
@@ -99,17 +93,11 @@ export default function LoginPage() {
         placeholder="Enter your password"
       />
 
-      <Button
-        title="Login"
-        onClick={handleSubmit(onSubmit)}
-      />
+      <Button title="Login" onClick={handleSubmit(onSubmit)} />
 
       <p className="text-center text-sm text-[#07173b]">
         Don&apos;t have an account?{" "}
-        <Link
-          href="/signup"
-          className="text-blue-500"
-        >
+        <Link href="/signup" className="text-blue-500">
           Signup
         </Link>
       </p>

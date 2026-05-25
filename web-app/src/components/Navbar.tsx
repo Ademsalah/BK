@@ -1,17 +1,22 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { Search, User } from "lucide-react";
-import { useState } from "react";
+import { User } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // ✅ SAFE login check (NO useEffect, NO setState)
-  const isLoggedIn =
-    typeof window !== "undefined" && !!localStorage.getItem("token");
+  // ✅ FIX: state-based auth
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // ✅ run only on client
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   const handleScroll = (id: string) => {
     if (pathname === "/home") {
@@ -35,7 +40,9 @@ export default function Navbar() {
     localStorage.removeItem("role");
     localStorage.removeItem("userId");
 
+    setIsLoggedIn(false); // ✅ update UI instantly
     setOpen(false);
+
     router.replace("/home");
   };
 
@@ -66,9 +73,6 @@ export default function Navbar() {
 
       {/* RIGHT SIDE */}
       <div className="flex items-center gap-4 relative">
-        {/* <Search size={20} className="text-[#07173b]" /> */}
-
-        {/* NOT LOGGED IN */}
         {!isLoggedIn ? (
           <p
             onClick={() => router.push("/login")}
@@ -88,7 +92,10 @@ export default function Navbar() {
 
             {/* BACKDROP */}
             {open && (
-              <div className="fixed inset-0" onClick={() => setOpen(false)} />
+              <div
+                className="fixed inset-0"
+                onClick={() => setOpen(false)}
+              />
             )}
 
             {/* DROPDOWN */}
@@ -98,7 +105,7 @@ export default function Navbar() {
                   <p
                     onClick={() => {
                       setOpen(false);
-                      router.push("/profile");
+                      router.push("/profil");
                     }}
                     className="px-4 py-2 text-sm text-[#07173b] hover:bg-gray-100 cursor-pointer"
                   >
