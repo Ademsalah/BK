@@ -49,9 +49,7 @@ export default function ParticipantD() {
         `http://localhost:5000/participants/participants/${id}/ban`,
       );
 
-      setParticipants((prev) =>
-        prev.map((p) => (p.id === id ? res.data : p)),
-      );
+      setParticipants((prev) => prev.map((p) => (p.id === id ? res.data : p)));
     } catch (err) {
       console.error(err);
     }
@@ -72,10 +70,10 @@ export default function ParticipantD() {
 
   const stats = useMemo(() => {
     const total = participants.length;
-    const banned = participants.filter((p) => p.banned).length;
-    const active = total - banned;
+    const suspended = participants.filter((p) => p.banned).length;
+    const active = total - suspended;
 
-    return { total, banned, active };
+    return { total, suspended, active };
   }, [participants]);
 
   if (loading) {
@@ -90,8 +88,6 @@ export default function ParticipantD() {
           Participants
         </h1>
       </div>
-
-    
 
       {/* SEARCH + FILTER */}
       <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -120,22 +116,24 @@ export default function ParticipantD() {
         </div>
       </div>
 
-       <div className="flex gap-2 flex-wrap mb-8">
-  <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
-    <span>Total</span>
-    <span className="font-bold">{stats.total}</span>
-  </div>
+      {/* STATS */}
+      <div className="flex gap-2 flex-wrap mb-8">
+        <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
+          <span>Total</span>
+          <span className="font-bold">{stats.total}</span>
+        </div>
 
-  <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
-    <span>Actifs</span>
-    <span className="font-bold text-green-400">{stats.active}</span>
-  </div>
+        <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
+          <span>Actifs</span>
+          <span className="font-bold text-green-400">{stats.active}</span>
+        </div>
 
-  <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
-    <span>Bannis</span>
-    <span className="font-bold text-red-400">{stats.banned}</span>
-  </div>
-</div>
+        <div className="px-4 py-2 rounded-full bg-gray-900 text-white text-sm flex items-center gap-2">
+          <span>Suspendus</span>
+          <span className="font-bold text-red-400">{stats.suspended}</span>
+        </div>
+      </div>
+
       {/* GRID */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredParticipants.map((p) => (
@@ -156,7 +154,7 @@ export default function ParticipantD() {
 
             <div className="mt-4">
               {p.banned ? (
-                <span className="text-red-400">BANNI</span>
+                <span className="text-red-400">SUSPENDU</span>
               ) : (
                 <span className="text-green-400">ACTIF</span>
               )}
@@ -171,17 +169,16 @@ export default function ParticipantD() {
                     : "bg-red-600 hover:bg-red-700"
                 }`}
               >
-                {p.banned ? "Débannir" : "Bannir"}
+                {p.banned ? "Réactiver" : "Suspendre"}
               </button>
             </div>
 
-            {/* accent line like EventsD */}
             <div className="mt-6 h-1 w-0 bg-red-500 rounded-full group-hover:w-full transition-all duration-300"></div>
           </div>
         ))}
       </div>
 
-      {/* PAGINATION (kept logic, only UI restyled) */}
+      {/* PAGINATION */}
       {pagination && (
         <div className="flex justify-center items-center gap-3 mt-12 flex-wrap">
           <button

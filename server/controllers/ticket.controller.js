@@ -2,6 +2,8 @@ const db = require("../models");
 
 const Ticket = db.Ticket;
 const Event = db.Event;
+const User = db.User; // ✅ IMPORTANT
+const { sendTicketEmail } = require("../utils/mailer"); // ✅ your existing mailer
 
 exports.bookTicket = async (req, res) => {
   try {
@@ -46,14 +48,29 @@ exports.bookTicket = async (req, res) => {
 
     await event.save();
 
-    res.json({
-      message: "Ticket booked successfully",
+    // ============================
+    // ✅ SEND EMAIL AFTER BOOKING
+    // ============================
+    const user = await User.findByPk(userId);
+
+    if (user?.email) {
+      try {
+        await sendTicketEmail(user.email, user.name, event, ticket);
+      } catch (emailError) {
+        console.error("Email error:", emailError.message);
+        // don't fail booking if email fails
+      }
+    }
+
+    // response
+    return res.json({
+      message: "Ticket booked successfully (email sent)",
       ticket,
       bookedTickets: event.bookedTickets,
       remainingTickets: event.capacity - event.bookedTickets,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: error.message,
     });
   }

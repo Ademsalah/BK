@@ -63,11 +63,62 @@ exports.getEvents = async (req, res) => {
 
 // UPDATE
 exports.updateEvent = async (req, res) => {
-  await Event.update(req.body, {
-    where: { id: req.params.id },
-  });
+  try {
+    const { id } = req.params;
 
-  res.json({ message: "Updated" });
+    // 1. Find event first
+    const event = await Event.findByPk(id);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // (optional) 2. check ownership (recommended)
+    if (event.adminId !== req.user.id) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    // 3. Handle new uploaded photos (if any)
+    let photos = event.photos || [];
+
+    if (req.files && req.files.length > 0) {
+      const newPhotos = req.files.map((file) => file.path);
+
+      // option A: replace all photos
+      // photos = newPhotos;
+
+      // option B: append photos (recommended)
+      photos = [...photos, ...newPhotos];
+    }
+
+    // 4. Update only allowed fields (safer than req.body spread)
+    const allowedFields = {
+      title: req.body.title,
+      description: req.body.description,
+      location: req.body.location,
+      date: req.body.date,
+      price: req.body.price,
+      category: req.body.category,
+      capacity: req.body.capacity,
+      photos,
+    };
+
+    // remove undefined fields (avoid overwriting with null)
+    Object.keys(allowedFields).forEach(
+      (key) => allowedFields[key] === undefined && delete allowedFields[key],
+    );
+
+    // 5. Update event
+    await event.update(allowedFields);
+
+    res.json({
+      message: "Event updated successfully",
+      data: event,
+    });
+  } catch (err) {
+    console.log("UPDATE EVENT ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
 };
 
 // DELETE

@@ -8,11 +8,12 @@ const {
   createEvent,
   getEvents,
   getEventById,
+  updateEvent,
 } = require("../controllers/event.controller");
 
 router.get("/", getEvents);
 router.post("/", auth, role("ADMIN"), upload.array("photos", 10), createEvent);
 
 router.get("/:id", getEventById);
-
+router.put("/:id", updateEvent);
 module.exports = router;

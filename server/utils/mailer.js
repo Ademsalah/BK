@@ -93,3 +93,43 @@ exports.sendWelcomeEmail = async (to, name) => {
 
   await transporter.sendMail(mailOptions);
 };
+// ===============================
+// TICKET CONFIRMATION EMAIL
+// ===============================
+exports.sendTicketEmail = async (to, userName, event, ticket) => {
+  const mailOptions = {
+    from: `"BKEvent" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: "🎟️ Your Ticket Confirmation",
+    html: `
+      <div style="font-family: Arial, sans-serif; padding:20px;">
+        <h2 style="color:#7c3aed;">🎟️ Ticket Confirmed</h2>
+
+        <p>Hello <strong>${userName}</strong>,</p>
+
+        <p>Your booking has been confirmed successfully.</p>
+
+        <hr/>
+
+        <h3>Event Details</h3>
+        <p><strong>Title:</strong> ${event.title}</p>
+        <p><strong>Date:</strong> ${new Date(event.date).toLocaleString()}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+
+        <hr/>
+
+        <h3>Ticket Info</h3>
+        <p><strong>Quantity:</strong> ${ticket.quantity}</p>
+        <p><strong>Total Price:</strong> ${ticket.totalPrice} DT</p>
+
+        <hr/>
+
+        <p style="color:gray;">
+          Please keep this email as your proof of purchase.
+        </p>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};

@@ -50,7 +50,7 @@ export default function EventsPage() {
             {/* IMAGE */}
             <div className="overflow-hidden">
               <img
-                src={event.image || "/images/show.jpg"}
+                src={event.photos?.[0] || "/ev.jpg"}
                 alt="event image"
                 className="w-full h-[260px] object-cover hover:scale-105 transition duration-500"
               />
