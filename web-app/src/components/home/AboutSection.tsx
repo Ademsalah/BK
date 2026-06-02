@@ -11,7 +11,7 @@ export default function AboutSection() {
       {/* LEFT IMAGE SIDE */}
       <div className="relative w-full h-[280px] sm:h-[380px] md:h-full">
         <Image
-          src="/logo2.png"
+          src="/core3.png"
           alt="Event Image"
           fill
           className="object-cover"

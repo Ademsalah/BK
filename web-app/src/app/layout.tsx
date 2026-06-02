@@ -2,6 +2,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 
+import '@/src/app/globals.css';
+import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
+
 export const metadata: Metadata = {
   title: "BK Events",
   description: "Event management platform",
@@ -15,8 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
-
+        <GluestackUIProvider mode="dark">
+            {children}
+          </GluestackUIProvider>
         {/* Toast notifications */}
         <Toaster
           position="top-right"

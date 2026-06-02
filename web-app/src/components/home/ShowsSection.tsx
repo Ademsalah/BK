@@ -96,7 +96,7 @@ export default function ShowsSection() {
       <div className="hidden md:flex items-center justify-center bg-white">
         <div className="relative w-full h-full">
           <Image
-            src="/logo.png"
+            src="/core2.png"
             alt="Event Image"
             fill
             className="object-cover"

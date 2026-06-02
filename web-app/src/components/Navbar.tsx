@@ -118,7 +118,7 @@ export default function Navbar() {
                     onClick={handleLogout}
                     className="px-4 py-2 text-sm text-red-500 hover:bg-gray-100 cursor-pointer"
                   >
-                    Logout
+                    Déconnecter
                   </p>
                 </div>
               </div>

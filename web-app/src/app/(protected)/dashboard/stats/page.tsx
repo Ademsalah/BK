@@ -76,11 +76,11 @@ export default function Page() {
   }
 
   return (
-    <div className="ml-56 min-h-screen bg-gray-50 px-4 py-6">
+    <div className=" bg-gray-50 p-6">
       {/* HEADER */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">
-          📊 Tableau de bord analytique
+        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
+          Tableau de bord analytique
         </h1>
         <p className="text-gray-700">
           Vue d’ensemble de la performance de vos événements

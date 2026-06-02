@@ -3,7 +3,8 @@ import React from "react";
 
 function ProfilParticipant() {
   return (
-    <div className="min-h-screen bg-[#1c0f2e] text-white px-10 py-16 items-center justify-center">
+    <div className="flex item bg-white  h-[70vh] items-center justify-center">
+   
       <Profil />
     </div>
   );

@@ -84,6 +84,7 @@ export default function CreateEvent() {
             label="Titre"
             placeholder="Concert incroyable..."
             className="bg-white text-gray-900"
+            labelClassName="text-white"
           />
 
           <Input
@@ -92,6 +93,8 @@ export default function CreateEvent() {
             label="Description"
             placeholder="De quoi parle votre événement ?"
             className="bg-white text-gray-900"
+            labelClassName="text-white"
+
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -100,7 +103,9 @@ export default function CreateEvent() {
               control={control}
               label="Date"
               type="date"
-              className="bg-white text-gray-900"
+              className="w-full p-2 rounded text-black bg-white "
+            labelClassName="text-white"
+
             />
 
             <Input
@@ -109,6 +114,8 @@ export default function CreateEvent() {
               label="Lieu"
               placeholder="Tunis..."
               className="bg-white text-gray-900"
+            labelClassName="text-white"
+
             />
           </div>
 
@@ -119,6 +126,8 @@ export default function CreateEvent() {
               label="Capacité"
               type="number"
               className="bg-white text-gray-900"
+            labelClassName="text-white"
+
             />
 
             <Input
@@ -127,6 +136,8 @@ export default function CreateEvent() {
               label="Prix billet"
               type="number"
               className="bg-white text-gray-900"
+            labelClassName="text-white"
+
             />
 
             <Input
@@ -135,6 +146,8 @@ export default function CreateEvent() {
               label="Budget total"
               type="number"
               className="bg-white text-gray-900"
+            labelClassName="text-white"
+
             />
           </div>
         </div>

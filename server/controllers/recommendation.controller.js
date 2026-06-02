@@ -153,3 +153,188 @@ exports.recommendTeams = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+exports.getReplacementCandidates = async (req, res) => {
+  try {
+    const { eventId, eventPrestataireId } = req.body;
+
+    if (!eventId || !eventPrestataireId) {
+      return res.status(400).json({
+        message: "eventId and eventPrestataireId required",
+      });
+    }
+
+    // 1. Get the refused assignment
+    const current = await db.EventPrestataire.findByPk(eventPrestataireId, {
+      include: [
+        {
+          model: db.PrestataireProfile,
+        },
+      ],
+    });
+
+    if (!current) {
+      return res.status(404).json({ message: "Prestataire not found" });
+    }
+
+    const category = current.PrestataireProfile.category;
+    const targetPrice = current.proposedPrice;
+
+    // 2. Get event to avoid duplicates
+    const event = await db.Event.findByPk(eventId, {
+      include: [
+        {
+          model: db.EventPrestataire,
+          include: [db.PrestataireProfile],
+        },
+      ],
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const usedIds = event.EventPrestataires.map(
+      (ep) => ep.PrestataireProfileId
+    );
+
+    // 3. Define price range (±20%)
+    const minPrice = targetPrice * 0.8;
+    const maxPrice = targetPrice * 1.2;
+
+    // 4. Find similar prestataires
+    const candidates = await db.PrestataireProfile.findAll({
+      where: {
+        category,
+        id: {
+          [db.Sequelize.Op.notIn]: usedIds,
+        },
+        priceMax: {
+          [db.Sequelize.Op.between]: [minPrice, maxPrice],
+        },
+      },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "name", "email"],
+        },
+      ],
+      order: [["rating", "DESC"]],
+      limit: 10,
+    });
+
+    return res.json({
+      category,
+      targetPrice,
+      candidates,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.replacePrestataire = async (req, res) => {
+  try {
+  const { eventId, eventPrestataireId, newPrestataireId } = req.body;
+
+    if (!eventId || !eventPrestataireId) {
+      return res.status(400).json({
+        message: "eventId and eventPrestataireId required",
+      });
+    }
+
+    // 1. Get current assignment
+    const current = await db.EventPrestataire.findByPk(eventPrestataireId, {
+      include: [
+        {
+          model: db.PrestataireProfile,
+        },
+      ],
+    });
+
+    if (!current) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    const category = current.PrestataireProfile.category;
+
+    // 2. Get event budget + existing selections
+    const event = await db.Event.findByPk(eventId, {
+      include: [
+        {
+          model: db.EventPrestataire,
+          include: [db.PrestataireProfile],
+        },
+      ],
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // 3. Get all already selected prestataires (except refused one)
+    const usedIds = event.EventPrestataires.map((ep) =>
+      ep.PrestataireProfileId
+    );
+
+    // 4. Find alternatives in same category
+    const alternatives = await db.PrestataireProfile.findAll({
+      where: {
+        category,
+        id: {
+          [db.Sequelize.Op.notIn]: usedIds, // avoid duplicates
+        },
+      },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "name", "email"],
+        },
+      ],
+      order: [["rating", "DESC"]],
+      limit: 10,
+    });
+
+    if (!alternatives.length) {
+      return res.json({
+        message: "No replacement available",
+      });
+    }
+
+    // 5. Pick best alternative (simple scoring)
+   let best = null;
+
+if (newPrestataireId) {
+  best = alternatives.find(
+    (a) => a.id === Number(newPrestataireId)
+  );
+}
+
+// fallback always safe
+if (!best) {
+  best = alternatives[0];
+}
+
+if (!best) {
+  return res.status(400).json({
+    message: "No valid prestataire found",
+  });
+}
+    // 6. Update EventPrestataire row
+    await current.update({
+      PrestataireProfileId: best.id,
+      status: "PENDING",
+      proposedPrice: best.priceMax,
+    });
+
+    return res.json({
+      message: "Prestataire replaced successfully",
+      newPrestataire: best,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};

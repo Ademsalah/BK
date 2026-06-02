@@ -7,14 +7,16 @@ const {
   assign,
   updateStatus,
   getEventsByPrestataire,
+  getPrestataireDetails,
 } = require("../controllers/eventPrestataire.controller");
 
-router.get("/:id", getEventsByPrestataire);
+router.post("/assign", auth, role("ADMIN"), assign);
 
 // ADMIN assigns prestataire to event
-router.post("/assign", auth, role("ADMIN"), assign);
 
 // PRESTATAIRE accepts/refuses
 router.put("/status/:id", updateStatus);
 
+router.get("/Epresta/:id", getPrestataireDetails);
+router.get("/:id", getEventsByPrestataire);
 module.exports = router;

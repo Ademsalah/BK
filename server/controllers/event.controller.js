@@ -73,10 +73,7 @@ exports.updateEvent = async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // (optional) 2. check ownership (recommended)
-    if (event.adminId !== req.user.id) {
-      return res.status(403).json({ message: "Not allowed" });
-    }
+   
 
     // 3. Handle new uploaded photos (if any)
     let photos = event.photos || [];

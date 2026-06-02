@@ -31,7 +31,7 @@ export default function Input({
         <div className="flex flex-col gap-1 w-full">
           {/* LABEL */}
           {label && (
-            <label className={`text-sm font-medium ${labelClassName}`}>
+            <label className={`text-[15px] font-semibold text-gray-800  ${labelClassName}`}>
               {label}
             </label>
           )}
@@ -46,7 +46,7 @@ export default function Input({
             type={type}
             placeholder={placeholder}
             disabled={disabled}
-            className={`
+            className={`bg-white
               px-4 py-2 rounded-xl border border-gray-300 
               focus:outline-none focus:ring-2 focus:ring-red-500 
               placeholder-gray-400 text-gray-900 transition
@@ -57,9 +57,7 @@ export default function Input({
 
           {/* ERROR */}
           {fieldState?.error && (
-            <p className="text-red-500 text-sm">
-              {fieldState.error.message}
-            </p>
+            <p className="text-red-500 text-sm">{fieldState.error.message}</p>
           )}
         </div>
       )}

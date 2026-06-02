@@ -32,7 +32,7 @@ export default function Sidebar() {
       { name: "Événements", path: "/dashboard/eventsD" },
       { name: "Prestataires", path: "/dashboard/prestataireD" },
       { name: "Participants", path: "/dashboard/participantD" },
-      { name: "Stats", path: "/dashboard/stats" }, // ✅ ADDED
+      { name: "Statistiques", path: "/dashboard/stats" }, // ✅ ADDED
     ],
 
     PRESTATAIRE: [
@@ -77,7 +77,7 @@ export default function Sidebar() {
           onClick={() => setShowModal(true)}
           className="mt-auto rounded-md bg-red-700 px-4 py-2 font-medium text-white transition hover:bg-red-600"
         >
-          Logout
+           Déconnecter
         </button>
       </aside>
 
@@ -86,11 +86,11 @@ export default function Sidebar() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div className="w-[320px] rounded-xl bg-white p-6 text-center shadow-lg">
             <h2 className="mb-2 text-lg font-semibold text-gray-800">
-              Are you sure?
+          Êtes-vous sûr(e) ?
             </h2>
 
             <p className="mb-6 text-sm text-gray-500">
-              You will be logged out of your account.
+             Vous serez déconnecté de votre compte.
             </p>
 
             <div className="flex gap-3">
@@ -98,14 +98,14 @@ export default function Sidebar() {
                 onClick={() => setShowModal(false)}
                 className="flex-1 rounded-md bg-gray-200 py-2 text-gray-700 hover:bg-gray-300"
               >
-                Cancel
+                Annuler
               </button>
 
               <button
                 onClick={handleLogout}
                 className="flex-1 rounded-md bg-red-600 py-2 text-white hover:bg-red-700"
               >
-                Logout
+                Déconnecter
               </button>
             </div>
           </div>

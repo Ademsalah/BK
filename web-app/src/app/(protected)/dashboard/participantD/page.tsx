@@ -81,7 +81,7 @@ export default function ParticipantD() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-white">
+    <div className=" bg-gray-50 p-6">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
@@ -93,7 +93,7 @@ export default function ParticipantD() {
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <input
           type="text"
-          placeholder="Search participants..."
+          placeholder="Rechercher un participant..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 px-4 py-2 rounded-xl bg-white border border-gray-400 text-gray-900 placeholder-gray-300 outline-none"
@@ -139,7 +139,7 @@ export default function ParticipantD() {
         {filteredParticipants.map((p) => (
           <div
             key={p.id}
-            className="group rounded-2xl p-6 shadow-lg border border-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-slate-700"
+            className="group rounded-2xl p-4 shadow-lg border border-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl bg-gray-800"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">

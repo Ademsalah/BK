@@ -169,93 +169,73 @@ export default function EventStep2() {
       </div>
 
       {/* RESULTS */}
-      <div className="grid gap-8">
-        {results.map((t, i) => (
-          <div
-            key={i}
-            className="group bg-slate-700 text-white rounded-2xl p-6 shadow-lg border border-white/10 hover:scale-[1.01] transition"
-          >
+      {/* RESULTS */}
+<div className="grid md:grid-cols-2 gap-5">
+  {results.map((t, i) => (
+    <div
+      key={i}
+      className="bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition"
+    >
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-semibold text-gray-900">
+          Team #{i + 1}
+        </h3>
 
-            {/* HEADER */}
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-lg">
-                Recommandation #{i + 1}
-              </h3>
+        <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+          {Math.round(t.score)}% Match
+        </span>
+      </div>
 
-              <span className="text-red-400 font-bold text-sm">
-                {Math.round(t.score)}% match
-              </span>
-            </div>
+      {/* Budget */}
+      <div className="mb-4">
+        <p className="text-sm text-gray-500">Budget total</p>
+        <p className="font-bold text-lg text-red-600">
+          {t.totalPrice} TND
+        </p>
+      </div>
 
-            {/* SCORE BAR */}
-            <div className="w-full h-2 bg-gray-900 rounded-full mb-5 overflow-hidden">
-              <div
-                className="h-full bg-red-600"
-                style={{ width: `${t.score}%` }}
-              />
-            </div>
+      {/* Categories */}
+      <div className="space-y-3">
+        {Object.entries(
+          t.team.reduce((acc: any, p: any) => {
+            if (!acc[p.category]) acc[p.category] = [];
+            acc[p.category].push(p);
+            return acc;
+          }, {})
+        ).map(([category, items]: any) => (
+          <div key={category}>
+            <p className="text-xs uppercase text-gray-400 mb-2">
+              {category}
+            </p>
 
-            {/* TEAM */}
-            <div className="space-y-4">
-              {Object.entries(
-                t.team.reduce((acc: any, p: any) => {
-                  if (!acc[p.category]) acc[p.category] = [];
-                  acc[p.category].push(p);
-                  return acc;
-                }, {}),
-              ).map(([category, items]: any) => (
-                <div key={category} className="bg-gray-900 rounded-xl p-4">
-                  <h4 className="text-red-400 font-semibold mb-3">
-                    {category}
-                  </h4>
-
-                  <div className="space-y-3">
-                    {items.map((p: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="flex justify-between bg-slate-800 rounded-lg p-3"
-                      >
-                        <div>
-                          <p className="font-medium">{p.User?.name}</p>
-                          <p className="text-gray-400 text-xs">
-                            📧 {p.User?.email}
-                          </p>
-                          <p className="text-gray-400 text-xs">
-                            📍 {p.location}
-                          </p>
-                        </div>
-
-                        <div className="text-right text-xs">
-                          <p>💰 {p.priceMax} TND</p>
-                          <p>⭐ {p.rating}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            <div className="flex flex-wrap gap-2">
+              {items.map((p: any) => (
+                <span
+                  key={p.id}
+                  className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs"
+                >
+                  {p.User?.name}
+                </span>
               ))}
             </div>
-
-            {/* FOOTER */}
-            <div className="flex justify-between items-center mt-6">
-              <p className="text-gray-300 text-sm">
-                Total : {t.totalPrice} TND
-              </p>
-
-              <button
-                onClick={() => {
-                  setSelectedTeam(i);
-                  assignTeam(t.team);
-                }}
-                className="px-5 py-2 rounded-full bg-green-600 hover:bg-green-700 text-white transition"
-              >
-                Sélectionner cette équipe ✅
-              </button>
-            </div>
-
           </div>
         ))}
       </div>
+
+      {/* Footer */}
+      <button
+        onClick={() => {
+          setSelectedTeam(i);
+          assignTeam(t.team);
+        }}
+        className="w-full mt-5 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-medium"
+      >
+        Select Team
+      </button>
+    </div>
+  ))}
+</div>
     </div>
   </div>
 );

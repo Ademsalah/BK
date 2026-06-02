@@ -45,7 +45,7 @@ exports.assign = async (req, res) => {
 };
 
 exports.updateStatus = async (req, res) => {
-    const userId = req.params.id;
+  const userId = req.params.id;
 
   const profile = await db.PrestataireProfile.findOne({
     where: { userId },
@@ -122,5 +122,61 @@ exports.getEventsByPrestataire = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+exports.getPrestataireDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // user
+    const user = await db.User.findOne({
+      where: {
+        id,
+        role: "PRESTATAIRE",
+      },
+
+      attributes: ["id", "name", "email", "banned", "createdAt"],
+
+      include: [
+        {
+          model: db.PrestataireProfile,
+
+          include: [
+            {
+              model: db.EventPrestataire,
+
+              include: [
+                {
+                  model: db.Event,
+
+                  attributes: ["id", "title", "date", "location", "status"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Prestataire not found",
+      });
+    }
+
+    // count events
+    const totalEvents = user.PrestataireProfile?.EventPrestataires?.length || 0;
+
+    res.json({
+      user,
+
+      stats: {
+        totalEvents,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+    });
   }
 };
