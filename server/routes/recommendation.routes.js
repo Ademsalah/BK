@@ -8,7 +8,7 @@ const {
   replacePrestataire,
 } = require("../controllers/recommendation.controller");
 
-router.post("/", auth, role("ADMIN"), recommendTeams);
+router.post("/", recommendTeams);
 router.post("/replacement-candidates", getReplacementCandidates);
 
 // 👉 replace prestataire

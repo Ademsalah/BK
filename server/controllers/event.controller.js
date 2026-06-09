@@ -1,3 +1,4 @@
+const { BULKDELETE } = require("sequelize/lib/query-types");
 const db = require("../models");
 const Event = db.Event;
 const User = db.User;
@@ -98,6 +99,7 @@ exports.updateEvent = async (req, res) => {
       category: req.body.category,
       capacity: req.body.capacity,
       photos,
+      budget: req.body.budget,
     };
 
     // remove undefined fields (avoid overwriting with null)

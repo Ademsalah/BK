@@ -4,11 +4,14 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Stars from "./components/stars";
+import { useAtom } from "jotai";
+import { eventAtom } from "@/atoms/EventAtom";
 
 function Event() {
   const params = useParams();
   const router = useRouter();
   const id = params.id;
+  const [eventTorecmnd,setEventTorecmnd] = useAtom(eventAtom);
 
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -256,147 +259,173 @@ function Event() {
       )}
 
       {/* TABLE + MODAL (UNCHANGED BELOW) */}
-      <div className="w-full py-10">
-        <div className="w-full bg-white shadow-lg overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-900 text-white">
-              <tr>
-                {[
-                  "Nom",
-                  "Catégorie",
-                  "Email",
-                  "Prix proposé",
-                  "Statut",
-                  "Action",
-                ].map((h) => (
-                  <th key={h} className="px-5 py-4 text-left">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
+     <div className="w-full py-10">
+  <div className="w-full bg-white shadow-lg overflow-x-auto">
+    <table className="w-full text-sm">
+      <thead className="bg-gray-900 text-white">
+        <tr>
+          {[
+            "Nom",
+            "Catégorie",
+            "Email",
+            "Prix proposé",
+            "Statut",
+            "Action",
+          ].map((h) => (
+            <th key={h} className="px-5 py-4 text-left">
+              {h}
+            </th>
+          ))}
+        </tr>
+      </thead>
 
-            <tbody>
-              {event.EventPrestataires?.map((ep: any) => (
-                <tr key={ep.id} className="border-t text-black">
-                  <td className="px-5 py-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-medium">
-                        {ep.PrestataireProfile?.User?.name}
-                      </span>
-                      <Stars rating={ep.PrestataireProfile?.rating || 0} />
-                    </div>
-                  </td>
+      <tbody>
+        {!event.EventPrestataires ||
+        event.EventPrestataires.length === 0 ? (
+          <tr>
+            <td
+              colSpan={6}
+              className="px-5 py-10 text-center text-gray-600"
+            >
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-base font-medium">
+                  Pas d'une équipe pour cet événement
+                </p>
 
-                  <td className="px-5 py-4">
-                    {ep.PrestataireProfile?.category}
-                  </td>
-                  <td className="px-5 py-4">
-                    {ep.PrestataireProfile?.User?.email}
-                  </td>
-                  <td className="px-5 py-4 font-semibold">
-                    {ep.proposedPrice} DT
-                  </td>
+                <button
+                  onClick={() => {
+                   setEventTorecmnd(event);
+                   router.push(`/dashboard/eventsD/create/step2`);
+                  }}
+                  className="px-5 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+                >
+                  Assigner une équipe
+                </button>
+              </div>
+            </td>
+          </tr>
+        ) : (
+          event.EventPrestataires?.map((ep: any) => (
+            <tr key={ep.id} className="border-t text-black">
+              <td className="px-5 py-4">
+                <div className="flex flex-col gap-1">
+                  <span className="font-medium">
+                    {ep.PrestataireProfile?.User?.name}
+                  </span>
+                  <Stars rating={ep.PrestataireProfile?.rating || 0} />
+                </div>
+              </td>
 
-                  <td className="px-5 py-4">
-                    <span
-                      className={`p-2 text-xs rounded-full ${
-                        ep.status === "ACCEPTED"
-                          ? "bg-green-600 text-white"
-                          : ep.status === "REFUSED"
-                            ? "bg-red-600 text-white"
-                            : "bg-gray-200 text-black"
-                      }`}
-                    >
-                      {ep.status}
-                    </span>
-                  </td>
+              <td className="px-5 py-4">
+                {ep.PrestataireProfile?.category}
+              </td>
 
-                  <td className="px-5 py-4">
-                    {ep.status === "REFUSED" && (
-                      <button
-                        onClick={async () => {
-                          setSelectedEp(ep);
-                          setOpenModal(true);
-                          setLoadingCandidates(true);
+              <td className="px-5 py-4">
+                {ep.PrestataireProfile?.User?.email}
+              </td>
 
-                          try {
-                            const res = await axios.post(
-                              "http://localhost:5000/recommend/replacement-candidates",
-                              {
-                                eventId: id,
-                                eventPrestataireId: ep.id,
+              <td className="px-5 py-4 font-semibold">
+                {ep.proposedPrice} DT
+              </td>
+
+              <td className="px-5 py-4">
+                <span
+                  className={`p-2 text-xs rounded-full ${
+                    ep.status === "ACCEPTED"
+                      ? "bg-green-600 text-white"
+                      : ep.status === "REFUSED"
+                        ? "bg-red-600 text-white"
+                        : "bg-gray-200 text-black"
+                  }`}
+                >
+                  {ep.status}
+                </span>
+              </td>
+
+              <td className="px-5 py-4">
+                {ep.status === "REFUSED" && (
+                  <button
+                    onClick={async () => {
+                      setSelectedEp(ep);
+                      setOpenModal(true);
+                      setLoadingCandidates(true);
+
+                      try {
+                        const res = await axios.post(
+                          "http://localhost:5000/recommend/replacement-candidates",
+                          {
+                            eventId: id,
+                            eventPrestataireId: ep.id,
+                          },
+                        );
+
+                        if (
+                          !res.data.candidates ||
+                          res.data.candidates.length === 0
+                        ) {
+                          setCandidates([
+                            {
+                              id: 1,
+                              category: "TRAITEUR",
+                              priceMax: 2500,
+                              User: {
+                                name: "Le petit traiteur",
+                                email: "dummy1@test.com",
                               },
-                            );
-
-                            // ✅ if backend empty
-                            if (
-                              !res.data.candidates ||
-                              res.data.candidates.length === 0
-                            ) {
-                              setCandidates([
-                                {
-                                  id: 1,
-                                  category: "TRAITEUR",
-                                  priceMax: 2500,
-                                  User: {
-                                    name: "Le petit traiteur",
-                                    email: "dummy1@test.com",
-                                  },
-                                },
-                                {
-                                  id: 2,
-                                  category: "TRAITEUR",
-                                  priceMax: 3200,
-                                  User: {
-                                    name: "Elite Food",
-                                    email: "elite@test.com",
-                                  },
-                                },
-                              ]);
-                            } else {
-                              setCandidates(res.data.candidates);
-                            }
-                          } catch (err) {
-                            console.error(err);
-
-                            // ✅ DUMMY DATA IF API FAILS
-                            setCandidates([
-                              {
-                                id: 1,
-                                category: "MUSICIEN",
-                                priceMax: 1800,
-                                User: {
-                                  name: "DJ Samy",
-                                  email: "dj@test.com",
-                                },
+                            },
+                            {
+                              id: 2,
+                              category: "TRAITEUR",
+                              priceMax: 3200,
+                              User: {
+                                name: "Elite Food",
+                                email: "elite@test.com",
                               },
-                              {
-                                id: 2,
-                                category: "MUSICIEN",
-                                priceMax: 2200,
-                                User: {
-                                  name: "Orchestra Lux",
-                                  email: "lux@test.com",
-                                },
-                              },
-                            ]);
-                          } finally {
-                            setLoadingCandidates(false);
-                          }
-                        }}
-                        className="px-3 py-1 bg-black text-white rounded-lg"
-                      >
-                        Remplacer
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                            },
+                          ]);
+                        } else {
+                          setCandidates(res.data.candidates);
+                        }
+                      } catch (err) {
+                        console.error(err);
+
+                        setCandidates([
+                          {
+                            id: 1,
+                            category: "MUSICIEN",
+                            priceMax: 1800,
+                            User: {
+                              name: "DJ Samy",
+                              email: "dj@test.com",
+                            },
+                          },
+                          {
+                            id: 2,
+                            category: "MUSICIEN",
+                            priceMax: 2200,
+                            User: {
+                              name: "Orchestra Lux",
+                              email: "lux@test.com",
+                            },
+                          },
+                        ]);
+                      } finally {
+                        setLoadingCandidates(false);
+                      }
+                    }}
+                    className="px-3 py-1 bg-black text-white rounded-lg"
+                  >
+                    Remplacer
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
 
       {/* EXISTING MODAL (UNCHANGED) */}
       {openModal && selectedEp && (

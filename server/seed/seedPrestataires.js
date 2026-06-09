@@ -1,10 +1,21 @@
 const bcrypt = require("bcryptjs");
-const { User, Prestataire } = require("../models");
+const { User, PrestataireProfile } = require("../models");
 
-const categories = ["TRAITEUR", "MUSICIEN", "SALLE", "DECORATION"];
+const categories = [
+  "TRAITEUR",
+  "Audiovisuel",
+  "Photo/Vidéo",
+  "Animation",
+  "Impression",
+  "Marketing digital",
+  "Transport",
+  "SALLE",
+  "Sécurité",
+  "Prestataires spécialisés",
+  "DECORATION",
+];
 
-// 🔥 20+ fake prestataires
-const baseNames = [
+const firstNames = [
   "Ali",
   "Youssef",
   "Omar",
@@ -29,26 +40,63 @@ const baseNames = [
   "Bilel",
   "Ines",
   "Rania",
+  "Ahmed",
+  "Walid",
+  "Zied",
+  "Ons",
+  "Rahma",
+  "Skander",
 ];
 
-const fakePrestataires = baseNames.map((name, i) => {
+const lastNames = [
+  "Events",
+  "Pro",
+  "Services",
+  "Studio",
+  "Agency",
+  "Group",
+  "Expert",
+  "Production",
+  "Design",
+  "Solutions",
+];
+
+// 🔥 Generate 100 prestataires
+const fakePrestataires = [];
+
+for (let i = 0; i < 100; i++) {
+  const firstName = firstNames[i % firstNames.length];
+  const lastName = lastNames[i % lastNames.length];
   const category = categories[i % categories.length];
 
-  return {
-    name: `${name} ${category.toLowerCase()}`,
-    email: `${name.toLowerCase()}${i}@test.com`,
+  // Generate realistic prices
+  const priceMin = Math.floor(Math.random() * 9200) + 800;
+
+  const priceMax = priceMin + Math.floor(Math.random() * (10000 - priceMin));
+
+  fakePrestataires.push({
+    name: `${firstName} ${lastName}`,
+    email: `${firstName.toLowerCase()}${i}@test.com`,
     category,
-    priceMin: 100 + i * 20,
-    priceMax: 300 + i * 50,
-    location: i % 2 === 0 ? "Tunis" : "Sousse",
-    description: `${category} professional service by ${name}`,
+    priceMin,
+    priceMax,
+    location:
+      i % 4 === 0
+        ? "Tunis"
+        : i % 4 === 1
+          ? "Sousse"
+          : i % 4 === 2
+            ? "Sfax"
+            : "Nabeul",
+
+    description: `${category} professional service by ${firstName}`,
     rating: (4 + Math.random()).toFixed(1),
-  };
-});
+  });
+}
 
 async function seedPrestataires() {
   try {
-    console.log("🌱 Seeding 20+ prestataires...");
+    console.log("🌱 Seeding 100 prestataires...");
 
     for (const item of fakePrestataires) {
       const existing = await User.findOne({
@@ -62,7 +110,7 @@ async function seedPrestataires() {
 
       const hashed = await bcrypt.hash("123456", 10);
 
-      // 1. User
+      // 1. Create User
       const user = await User.create({
         name: item.name,
         email: item.email,
@@ -71,8 +119,8 @@ async function seedPrestataires() {
         mustChangePassword: false,
       });
 
-      // 2. Prestataire
-      await Prestataire.create({
+      // 2. Create Prestataire Profile
+      await PrestataireProfile.create({
         userId: user.id,
         category: item.category,
         priceMin: item.priceMin,
@@ -82,10 +130,12 @@ async function seedPrestataires() {
         rating: item.rating,
       });
 
-      console.log(`✅ Created ${item.name}`);
+      console.log(
+        `✅ Created ${item.name} | ${item.category} | ${item.priceMin} - ${item.priceMax} DT`,
+      );
     }
 
-    console.log("🎉 Done seeding 20+ prestataires!");
+    console.log("🎉 Done seeding 100 prestataires!");
     process.exit();
   } catch (err) {
     console.error("❌ Error:", err);

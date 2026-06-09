@@ -1,7 +1,19 @@
 // models/PrestataireProfile.js
 module.exports = (sequelize, DataTypes) => {
   const PrestataireProfile = sequelize.define("PrestataireProfile", {
-    category: DataTypes.ENUM("TRAITEUR", "MUSICIEN", "SALLE", "DECORATION"),
+    category: DataTypes.ENUM(
+      "TRAITEUR",
+      "Audiovisuel",
+      "Photo/Vidéo",
+      "Animation",
+      "Impression",
+      "Marketing digital",
+      "Transport",
+      "SALLE",
+      "Sécurité",
+      "Prestataires spécialisés",
+      "DECORATION",
+    ),
     priceMin: DataTypes.FLOAT,
     priceMax: DataTypes.FLOAT,
     rating: {
@@ -12,15 +24,15 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
   });
 
- PrestataireProfile.associate = (models) => {
-  PrestataireProfile.belongsTo(models.User, {
-    foreignKey: "userId",
-  });
+  PrestataireProfile.associate = (models) => {
+    PrestataireProfile.belongsTo(models.User, {
+      foreignKey: "userId",
+    });
 
-  PrestataireProfile.hasMany(models.EventPrestataire, {
-    foreignKey: "prestataireId",
-  });
-};
+    PrestataireProfile.hasMany(models.EventPrestataire, {
+      foreignKey: "prestataireId",
+    });
+  };
 
   return PrestataireProfile;
 };
