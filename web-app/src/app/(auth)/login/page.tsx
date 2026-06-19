@@ -101,7 +101,7 @@ export default function LoginPage() {
         label="Email"
         type="email"
         placeholder="Entrez votre email"
-        className="text-white placeholder:text-white/25"
+        className="text-black placeholder:text-white/25"
         labelClassName="text-white/60 font-semibold"
       />
 
@@ -111,7 +111,7 @@ export default function LoginPage() {
         label="Mot de passe"
         type="password"
         placeholder="Entrez votre mot de passe"
-        className="text-white placeholder:text-white/25"
+        className="text-black placeholder:text-white/25"
         labelClassName="text-white/60 font-semibold"
       />
 

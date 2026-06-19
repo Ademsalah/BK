@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema, SignupSchema } from "./signupSchema";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -34,8 +35,8 @@ export default function SignupPage() {
         email: data.email,
         password: data.password,
       });
+      toast.success("Inscription réussie !");
 
-      alert("Inscription réussie !");
       router.push("/login");
     } catch (err) {
       console.error(err);
@@ -44,7 +45,6 @@ export default function SignupPage() {
 
   return (
     <div className="w-full max-w-md bg-black/10 backdrop-blur-xl shadow-2xl rounded-2xl p-8 flex flex-col gap-5 text-white">
-      
       {/* Logo Section (same as login) */}
       <div className="flex flex-col items-center ">
         <img
@@ -76,7 +76,7 @@ export default function SignupPage() {
         control={control}
         label="Nom complet"
         placeholder="Entrez votre nom"
-        className="text-white placeholder:text-white/25"
+        className="text-black placeholder:text-white/25"
         labelClassName="text-white/60 font-semibold"
       />
 
@@ -86,7 +86,7 @@ export default function SignupPage() {
         label="Email"
         type="email"
         placeholder="Entrez votre email"
-        className="text-white placeholder:text-white/25"
+        className="text-black placeholder:text-white/25"
         labelClassName="text-white/60 font-semibold"
       />
 
@@ -96,7 +96,7 @@ export default function SignupPage() {
         label="Mot de passe"
         type="password"
         placeholder="Entrez votre mot de passe"
-        className="text-white placeholder:text-white/25"
+        className="text-black placeholder:text-white/25"
         labelClassName="text-white/60 font-semibold"
       />
 
