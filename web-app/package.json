@@ -15,6 +15,7 @@
     "@gluestack/ui-next-adapter": "^3.0.3",
     "@hookform/resolvers": "^5.2.2",
     "@legendapp/motion": "^2.3.0",
+    "@netlify/plugin-nextjs": "^5.15.12",
     "axios": "^1.15.2",
     "dom-helpers": "^5.2.1",
     "framer-motion": "^12.38.0",

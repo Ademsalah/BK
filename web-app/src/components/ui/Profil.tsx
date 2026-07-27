@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import Input from "./Input";
+import toast from "react-hot-toast";
 
 const profileSchema = z.object({
   name: z.string().min(3),
@@ -85,8 +86,8 @@ export default function Profil() {
 
       setPendingData(payload);
       setOtpStep(true);
-
-      alert("OTP envoyé à votre email 📩");
+      toast.success("OTP envoyé à votre email 📩");
+      // alert("OTP envoyé à votre email 📩");
     } catch (err) {
       console.error(err);
       alert("Erreur envoi OTP ❌");
@@ -108,8 +109,7 @@ export default function Profil() {
         otp,
         data: pendingData,
       });
-
-      alert("Profil mis à jour avec succès ✅");
+      toast.success("Profil mis à jour avec succès ✅");
 
       // reset everything
       setOtpStep(false);
@@ -118,7 +118,7 @@ export default function Profil() {
       setChangePasswordMode(false);
     } catch (err) {
       console.error(err);
-      alert("OTP invalide ❌");
+      toast.error("OTP invalide ❌");
     } finally {
       setUpdating(false);
     }
@@ -129,11 +129,9 @@ export default function Profil() {
   }
 
   return (
-    <div >
+    <div>
       <div className="w-full max-w-3xl p-6 flex flex-col gap-10">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-          Mon Profil
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">Mon Profil</h2>
 
         {/* STEP 1 FORM */}
         {!otpStep ? (
@@ -173,7 +171,7 @@ export default function Profil() {
             <button
               type="submit"
               disabled={updating}
-             className="bg-red-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-700 transition-all duration-200 shadow-md w-fit self-center"
+              className="bg-red-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-700 transition-all duration-200 shadow-md w-fit self-center"
             >
               {updating ? "Envoi OTP..." : "Sauvegarder"}
             </button>
