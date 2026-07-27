@@ -1,11 +1,14 @@
-import type { NextConfig } from 'next';
-import { withGluestackUI } from '@gluestack/ui-next-adapter';
+import type { NextConfig } from "next";
+import { withGluestackUI } from "@gluestack/ui-next-adapter";
 
 const nextConfig: NextConfig = {
+  // output: "export",
+  trailingSlash: true,
+
   transpilePackages: [
-    '@gluestack-ui/core',
-    '@gluestack-ui/utils',
-    '@legendapp/motion',
+    "@gluestack-ui/core",
+    "@gluestack-ui/utils",
+    "@legendapp/motion",
   ],
 };
 
