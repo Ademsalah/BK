@@ -15,130 +15,231 @@ const categories = [
   "DECORATION",
 ];
 
-const firstNames = [
-  "Ali",
-  "Youssef",
-  "Omar",
-  "Khalil",
-  "Sami",
-  "Amine",
-  "Rami",
-  "Fares",
-  "Houssem",
-  "Anis",
-  "Nour",
-  "Salma",
-  "Aya",
-  "Leila",
-  "Mariam",
-  "Karim",
-  "Hatem",
-  "Mehdi",
-  "Saber",
-  "Fedi",
-  "Nader",
-  "Bilel",
-  "Ines",
-  "Rania",
-  "Ahmed",
-  "Walid",
-  "Zied",
-  "Ons",
-  "Rahma",
-  "Skander",
+const companyNames = [
+  "Golden Events",
+  "Elite Weddings",
+  "Prestige Event",
+  "Magic Moments",
+  "Dream Makers",
+  "Royal Events",
+  "Event Plus",
+  "Vision Event",
+  "Lux Event",
+  "Prime Services",
+  "Event Factory",
+  "Smart Events",
+  "Infinity Events",
+  "Diamond Event",
+  "Happy Day",
+  "Grand Occasion",
+  "Celebration Pro",
+  "Perfect Event",
+  "Star Production",
+  "Elite Production",
+  "Creative Studio",
+  "Pixel Media",
+  "Flash Photography",
+  "Wedding Experts",
+  "VIP Services",
+  "Top Decor",
+  "Urban Events",
+  "Event Masters",
+  "Blue Sky Events",
+  "Sunshine Events",
+  "Harmony Events",
+  "Premium Event",
+  "White Rose",
+  "Golden Touch",
+  "Crystal Event",
+  "Next Event",
+  "Event Hub",
+  "Event Concept",
+  "Majestic Events",
+  "Dream Wedding",
+  "VIP Security",
+  "Safe Guard",
+  "Quick Transport",
+  "Luxury Transport",
+  "Digital Boost",
+  "Market Vision",
+  "Print Factory",
+  "Media House",
+  "Studio One",
+  "Pro Event Tunisia",
+  "Event Expert",
+  "Event Connect",
+  "Bright Event",
+  "Event Leaders",
+  "Tunisia Event Pro",
+  "Event Sphere",
+  "Prestige Decor",
+  "Elegant Design",
+  "Creative Decor",
+  "Royal Decoration",
+  "Golden Catering",
+  "Delice Catering",
+  "Chef Services",
+  "Premium Catering",
+  "Gourmet Events",
+  "Audio Vision",
+  "Tech Event",
+  "Sound Masters",
+  "Light & Sound",
+  "Event Tech",
+  "Security First",
+  "Shield Security",
+  "Safe Events",
+  "Protection Pro",
+  "Guardian Services",
+  "Photo Prestige",
+  "Pixel Wedding",
+  "Vision Photography",
+  "Dream Capture",
+  "Focus Studio",
+  "Creative Lens",
+  "Memories Studio",
+  "Event Stars",
+  "Golden Memories",
+  "Future Events",
+  "Skyline Events",
+  "Ocean Events",
+  "Elite Solutions",
+  "Event Partners",
+  "Perfect Moments",
+  "Royal Production",
+  "Grand Services",
+  "Diamond Solutions",
+  "Spark Events",
+  "Magic Production",
+  "Event Point",
+  "Smart Production",
+  "Ultimate Events",
+  "Legend Events",
+  "Nova Events",
 ];
 
-const lastNames = [
-  "Events",
-  "Pro",
-  "Services",
-  "Studio",
-  "Agency",
-  "Group",
-  "Expert",
-  "Production",
-  "Design",
-  "Solutions",
+const locations = [
+  "Tunis",
+  "Sousse",
+  "Sfax",
+  "Nabeul",
+  "Hammamet",
+  "Monastir",
+  "Mahdia",
+  "Bizerte",
+  "Djerba",
+  "Gabès",
 ];
 
-// 🔥 Generate 100 prestataires
-const fakePrestataires = [];
+const categoryPriceRanges = {
+  TRAITEUR: { min: 500, max: 1500 },
+  Audiovisuel: { min: 300, max: 1200 },
+  "Photo/Vidéo": { min: 200, max: 1000 },
+  Animation: { min: 150, max: 800 },
+  Impression: { min: 100, max: 500 },
+  "Marketing digital": { min: 200, max: 1000 },
+  Transport: { min: 150, max: 700 },
+  SALLE: { min: 800, max: 1500 },
+  Sécurité: { min: 200, max: 900 },
+  "Prestataires spécialisés": { min: 300, max: 1500 },
+  DECORATION: { min: 250, max: 1200 },
+};
 
-for (let i = 0; i < 100; i++) {
-  const firstName = firstNames[i % firstNames.length];
-  const lastName = lastNames[i % lastNames.length];
-  const category = categories[i % categories.length];
+function generatePrices(category) {
+  const range = categoryPriceRanges[category];
 
-  // Generate realistic prices
-  const priceMin = Math.floor(Math.random() * 9200) + 800;
+  const priceMin =
+    Math.floor(Math.random() * (range.max - range.min + 1)) +
+    range.min;
 
-  const priceMax = priceMin + Math.floor(Math.random() * (10000 - priceMin));
+  const gap = Math.floor(Math.random() * 401) + 100; // 100 → 500 DT
 
-  fakePrestataires.push({
-    name: `${firstName} ${lastName}`,
-    email: `${firstName.toLowerCase()}${i}@test.com`,
-    category,
+  const priceMax = Math.min(priceMin + gap, range.max);
+
+  return {
     priceMin,
     priceMax,
-    location:
-      i % 4 === 0
-        ? "Tunis"
-        : i % 4 === 1
-          ? "Sousse"
-          : i % 4 === 2
-            ? "Sfax"
-            : "Nabeul",
+  };
+}
 
-    description: `${category} professional service by ${firstName}`,
-    rating: (4 + Math.random()).toFixed(1),
-  });
+function generateRating() {
+  return (3.8 + Math.random() * 1.2).toFixed(1);
+}
+
+function generateDescription(name, category) {
+  const descriptions = [
+    `${name} est spécialisé dans les services de ${category} pour les mariages, conférences et événements privés.`,
+    `${name} propose des prestations professionnelles de ${category} avec une équipe expérimentée.`,
+    `${name} accompagne les entreprises et particuliers dans l'organisation d'événements réussis.`,
+    `${name} offre des solutions sur mesure en ${category} pour tout type d'événement.`,
+    `${name} est reconnu pour la qualité de ses prestations et son professionnalisme.`,
+  ];
+
+  return descriptions[Math.floor(Math.random() * descriptions.length)];
 }
 
 async function seedPrestataires() {
   try {
-    console.log("🌱 Seeding 100 prestataires...");
+    console.log("🌱 Seeding prestataires...");
 
-    for (const item of fakePrestataires) {
+    for (let i = 0; i < companyNames.length; i++) {
+      const name = companyNames[i];
+
+      const email = `${name
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "")}@prestataire.tn`;
+
+      const category =
+        categories[Math.floor(Math.random() * categories.length)];
+
+      const { priceMin, priceMax } = generatePrices(category);
+
+      const location =
+        locations[Math.floor(Math.random() * locations.length)];
+
+      const rating = generateRating();
+
       const existing = await User.findOne({
-        where: { email: item.email },
+        where: { email },
       });
 
       if (existing) {
-        console.log(`⚠️ Skipped ${item.email}`);
+        console.log(`⚠️ Skipped ${email}`);
         continue;
       }
 
-      const hashed = await bcrypt.hash("123456", 10);
+      const hashedPassword = await bcrypt.hash("123456", 10);
 
-      // 1. Create User
       const user = await User.create({
-        name: item.name,
-        email: item.email,
-        password: hashed,
+        name,
+        email,
+        password: hashedPassword,
         role: "PRESTATAIRE",
         mustChangePassword: false,
       });
 
-      // 2. Create Prestataire Profile
       await PrestataireProfile.create({
         userId: user.id,
-        category: item.category,
-        priceMin: item.priceMin,
-        priceMax: item.priceMax,
-        location: item.location,
-        description: item.description,
-        rating: item.rating,
+        category,
+        priceMin,
+        priceMax,
+        location,
+        description: generateDescription(name, category),
+        rating,
       });
 
       console.log(
-        `✅ Created ${item.name} | ${item.category} | ${item.priceMin} - ${item.priceMax} DT`,
+        `✅ ${name} | ${category} | ${priceMin}-${priceMax} DT | ⭐ ${rating}`
       );
     }
 
-    console.log("🎉 Done seeding 100 prestataires!");
-    process.exit();
-  } catch (err) {
-    console.error("❌ Error:", err);
+    console.log(
+      `🎉 Successfully seeded ${companyNames.length} prestataires!`
+    );
+
+    process.exit(0);
+  } catch (error) {
+    console.error("❌ Error seeding prestataires:", error);
     process.exit(1);
   }
 }

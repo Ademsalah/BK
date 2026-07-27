@@ -90,8 +90,14 @@ exports.recommendTeams = async (req, res) => {
       // IMPORTANT:
       // limit candidates aggressively to avoid combinatorial explosion
       const list = grouped[cat]
-        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-        .slice(0, 3);
+        .sort((a, b) => {
+          const ratingDiff =
+            (b.rating || 0) - (a.rating || 0);
+
+          if (ratingDiff !== 0) return ratingDiff;
+
+          return (a.priceMax || 0) - (b.priceMax || 0);
+        }).slice(0, 3);
 
       categoryCombinations[cat] = getCombinations(list, count);
     }
@@ -146,6 +152,7 @@ exports.recommendTeams = async (req, res) => {
         addTopTeam({
           team: [...currentTeam],
           totalPrice: currentPrice,
+          remainingBudget: budget - currentPrice,
           score: Number(score.toFixed(2)),
         });
 

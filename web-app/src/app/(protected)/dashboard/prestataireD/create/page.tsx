@@ -49,7 +49,7 @@ export default function CreatePrestatairePage() {
   }, [id, reset]);
 
   // 🚀 submit (create or update)
-  const onSubmit = async (data) => {
+  const onSubmit = async (data:any) => {
     try {
       setLoading(true);
 
@@ -74,7 +74,7 @@ export default function CreatePrestatairePage() {
       }
 
       router.push("/dashboard/prestataireD");
-    } catch (err) {
+    } catch (err:any) {
       console.error(err);
       alert(err.response?.data?.error || "Error");
     } finally {

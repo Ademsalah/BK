@@ -38,8 +38,6 @@ export default function EventStep2() {
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [budget, setBudget] = useState(event.totalBudget);
 
-  
-
   const handleSaveBudget = async () => {
     try {
       await axios.patch(`http://localhost:3000/events/${event.id}`, {
@@ -150,7 +148,7 @@ export default function EventStep2() {
                 <input
                   type="number"
                   value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
+                  onChange={(e) => setBudget(Number(e.target.value))}
                   className="ml-2 w-28 bg-white/10 border border-white/20 rounded-lg px-2 py-1 text-white outline-none"
                 />
               ) : (
@@ -288,71 +286,72 @@ export default function EventStep2() {
         )}
 
         {/* RESULTS */}
-      {results.length > 0 && (  <div className="grid md:grid-cols-2 gap-5">
-          {results.map((t, i) => (
-            <div
-              key={i}
-              className="bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition"
-            >
-              {/* Header */}
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-gray-900">Team #{i + 1}</h3>
-
-                <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                  {Math.round(t.score)}% Match
-                </span>
-              </div>
-
-              {/* Budget */}
-              <div className="mb-4">
-                <p className="text-sm text-gray-500">Budget total</p>
-                <p className="font-bold text-lg text-red-600">
-                  {t.totalPrice} TND
-                </p>
-              </div>
-
-              {/* Categories */}
-              <div className="space-y-3">
-                {Object.entries(
-                  t.team.reduce((acc: any, p: any) => {
-                    if (!acc[p.category]) acc[p.category] = [];
-                    acc[p.category].push(p);
-                    return acc;
-                  }, {}),
-                ).map(([category, items]: any) => (
-                  <div key={category}>
-                    <p className="text-xs uppercase text-gray-400 mb-2">
-                      {category}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2">
-                      {items.map((p: any) => (
-                        <span
-                          key={p.id}
-                          className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs"
-                        >
-                          {p.User?.name}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Footer */}
-              <button
-                onClick={() => {
-                  setSelectedTeam(i);
-                  assignTeam(t.team);
-                }}
-                className="w-full mt-5 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-medium"
+        {results.length > 0 && (
+          <div className="grid md:grid-cols-2 gap-5">
+            {results.map((t, i) => (
+              <div
+                key={i}
+                className="bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition"
               >
-                Select Team
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                {/* Header */}
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-semibold text-gray-900">Team #{i + 1}</h3>
+
+                  <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                    {Math.round(t.score)}% Match
+                  </span>
+                </div>
+
+                {/* Budget */}
+                <div className="mb-4">
+                  <p className="text-sm text-gray-500">Budget total</p>
+                  <p className="font-bold text-lg text-red-600">
+                    {t.totalPrice} TND
+                  </p>
+                </div>
+
+                {/* Categories */}
+                <div className="space-y-3">
+                  {Object.entries(
+                    t.team.reduce((acc: any, p: any) => {
+                      if (!acc[p.category]) acc[p.category] = [];
+                      acc[p.category].push(p);
+                      return acc;
+                    }, {}),
+                  ).map(([category, items]: any) => (
+                    <div key={category}>
+                      <p className="text-xs uppercase text-gray-400 mb-2">
+                        {category}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2">
+                        {items.map((p: any) => (
+                          <span
+                            key={p.id}
+                            className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs"
+                          >
+                            {p.User?.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Footer */}
+                <button
+                  onClick={() => {
+                    setSelectedTeam(i);
+                    assignTeam(t.team);
+                  }}
+                  className="w-full mt-5 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-medium"
+                >
+                  Select Team
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

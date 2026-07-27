@@ -1,7 +1,12 @@
 import Sidebar from "./components/SideBar";
+import type { ReactNode } from "react";
 
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <div className="flex">
       {/* Sidebar */}
