@@ -31,7 +31,7 @@ export default function SignupPage() {
 
     try {
       const res = await axios.post(
-        "https://bk-production-d11b.up.railway.app/auth/register",
+        "https://bk-production-0584.up.railway.app/auth/register",
         {
           name: data.name,
           email: data.email,

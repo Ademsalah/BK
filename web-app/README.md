@@ -14,7 +14,7 @@ pnpm dev
 bun dev
 ```
 
-Open [https://bk-production-d11b.up.railway.app](https://bk-production-d11b.up.railway.app) with your browser to see the result.
+Open [https://bk-production-0584.up.railway.app](https://bk-production-0584.up.railway.app) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

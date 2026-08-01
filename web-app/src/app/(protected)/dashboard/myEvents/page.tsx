@@ -15,7 +15,7 @@ export default function Page() {
         if (!userId) return;
 
         const res = await axios.get(
-          `https://bk-production-d11b.up.railway.app/event-prestataires/${userId}`,
+          `https://bk-production-0584.up.railway.app/event-prestataires/${userId}`,
           {
             params: {
               page: 1,

@@ -16,7 +16,7 @@ export default function EventsPage() {
     const fetchEvents = async () => {
       try {
         const response = await axios.get(
-          `https://bk-production-d11b.up.railway.app/events?page=${page}&limit=${ITEMS_PER_PAGE}`,
+          `https://bk-production-0584.up.railway.app/events?page=${page}&limit=${ITEMS_PER_PAGE}`,
         );
 
         setEvents(response.data.data);

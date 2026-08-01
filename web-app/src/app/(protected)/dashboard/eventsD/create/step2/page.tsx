@@ -75,7 +75,7 @@ export default function EventStep2() {
       setLoading(true);
 
       const res = await axios.post(
-        "https://bk-production-d11b.up.railway.app/recommend",
+        "https://bk-production-0584.up.railway.app/recommend",
         {
           budget: event.totalBudget,
           categories, // ✅ correct format now
@@ -101,7 +101,7 @@ export default function EventStep2() {
     console.log("TEAM:", team);
     try {
       const res = await axios.post(
-        "https://bk-production-d11b.up.railway.app/event-prestataires/assign",
+        "https://bk-production-0584.up.railway.app/event-prestataires/assign",
         {
           eventId: event.id,
           team: team.map((p) => ({
