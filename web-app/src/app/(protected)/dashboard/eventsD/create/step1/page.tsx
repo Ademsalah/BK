@@ -49,7 +49,7 @@ export default function CreateEvent() {
       });
 
       const res = await axios.post(
-        "https://bk-production-d11b.up.railway.app:5000/events",
+        "https://bk-production-d11b.up.railway.app/events",
         formData,
         {
           headers: {

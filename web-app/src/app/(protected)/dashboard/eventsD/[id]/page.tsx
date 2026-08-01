@@ -40,7 +40,7 @@ function Event() {
   const fetchEvent = async () => {
     try {
       const res = await axios.get(
-        `https://bk-production-d11b.up.railway.app:5000/events/${id}`,
+        `https://bk-production-d11b.up.railway.app/events/${id}`,
       );
 
       setEvent(res.data);
@@ -89,7 +89,7 @@ function Event() {
   const handleUpdate = async () => {
     try {
       await axios.put(
-        `https://bk-production-d11b.up.railway.app:5000/events/${id}`,
+        `https://bk-production-d11b.up.railway.app/events/${id}`,
         formData,
       );
 
@@ -107,7 +107,7 @@ function Event() {
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `https://bk-production-d11b.up.railway.app:5000/events/${id}`,
+        `https://bk-production-d11b.up.railway.app/events/${id}`,
       );
 
       setShowDeleteModal(false);
@@ -123,7 +123,7 @@ function Event() {
   const handleReplace = async (candidate: any) => {
     try {
       await axios.post(
-        "https://bk-production-d11b.up.railway.app:5000/recommend/replace-prestataire",
+        "https://bk-production-d11b.up.railway.app/recommend/replace-prestataire",
         {
           eventId: id,
           eventPrestataireId: selectedEp.id,
@@ -362,7 +362,7 @@ function Event() {
 
                             try {
                               const res = await axios.post(
-                                "https://bk-production-d11b.up.railway.app:5000/recommend/replacement-candidates",
+                                "https://bk-production-d11b.up.railway.app/recommend/replacement-candidates",
                                 {
                                   eventId: id,
                                   eventPrestataireId: ep.id,

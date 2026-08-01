@@ -38,7 +38,7 @@ export default function CreatePrestatairePage() {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `https://bk-production-d11b.up.railway.app:5000/prestataires/${id}`,
+          `https://bk-production-d11b.up.railway.app/prestataires/${id}`,
         );
 
         reset(res.data); // fill form
@@ -58,7 +58,7 @@ export default function CreatePrestatairePage() {
       if (isEdit) {
         // ✏️ UPDATE
         await axios.put(
-          `https://bk-production-d11b.up.railway.app:5000/prestataires/${id}`,
+          `https://bk-production-d11b.up.railway.app/prestataires/${id}`,
           data,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -69,7 +69,7 @@ export default function CreatePrestatairePage() {
       } else {
         // ➕ CREATE
         await axios.post(
-          "https://bk-production-d11b.up.railway.app:5000/prestataires/create-prestataire",
+          "https://bk-production-d11b.up.railway.app/prestataires/create-prestataire",
           data,
           //   {
           //     headers: { Authorization: `Bearer ${token}` },

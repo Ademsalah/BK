@@ -29,7 +29,7 @@ export default function EventsD() {
       setLoading(true);
 
       const res = await axios.get(
-        `https://bk-production-d11b.up.railway.app:5000/events?page=${pageNumber}&limit=6&search=${searchValue}`,
+        `https://bk-production-d11b.up.railway.app/events?page=${pageNumber}&limit=6&search=${searchValue}`,
       );
 
       setEvents(res.data.data);

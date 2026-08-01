@@ -21,7 +21,7 @@ function Page() {
     const fetchEvent = async () => {
       try {
         const res = await axios.get(
-          `https://bk-production-d11b.up.railway.app:5000/events/${id}`,
+          `https://bk-production-d11b.up.railway.app/events/${id}`,
         );
         setEvent(res.data);
       } catch (err) {
@@ -51,7 +51,7 @@ function Page() {
   const updateStatus = async (epId: number, status: string) => {
     try {
       await axios.put(
-        `https://bk-production-d11b.up.railway.app:5000/event-prestataires/status/${userId}`,
+        `https://bk-production-d11b.up.railway.app/event-prestataires/status/${userId}`,
         { status },
       );
 

@@ -45,7 +45,7 @@ export default function Profil() {
         if (!userId) return;
 
         const { data } = await axios.get(
-          `https://bk-production-d11b.up.railway.app:5000/participants/user/${userId}`,
+          `https://bk-production-d11b.up.railway.app/participants/user/${userId}`,
         );
 
         reset({
@@ -81,7 +81,7 @@ export default function Profil() {
 
       // send OTP FIRST
       await axios.post(
-        `https://bk-production-d11b.up.railway.app:5000/update/send-otp`,
+        `https://bk-production-d11b.up.railway.app/update/send-otp`,
         {
           userId,
         },
@@ -108,7 +108,7 @@ export default function Profil() {
       if (!userId) return;
 
       await axios.post(
-        `https://bk-production-d11b.up.railway.app:5000/update/verify-otp`,
+        `https://bk-production-d11b.up.railway.app/update/verify-otp`,
         {
           userId,
           otp,

@@ -13,7 +13,7 @@ export default function Page() {
     const fetchEvents = async () => {
       try {
         const res = await axios.get(
-          "https://bk-production-d11b.up.railway.app:5000/events",
+          "https://bk-production-d11b.up.railway.app/events",
         );
 
         const data = res.data;

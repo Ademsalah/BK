@@ -26,7 +26,7 @@ export default function EventDetailsPage() {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `https://bk-production-d11b.up.railway.app:5000/events/${id}`,
+          `https://bk-production-d11b.up.railway.app/events/${id}`,
         );
 
         setEvent(response.data);
@@ -62,7 +62,7 @@ export default function EventDetailsPage() {
       }
 
       const response = await axios.post(
-        "https://bk-production-d11b.up.railway.app:5000/tickets",
+        "https://bk-production-d11b.up.railway.app/tickets",
         {
           eventId: event.id,
           quantity,
