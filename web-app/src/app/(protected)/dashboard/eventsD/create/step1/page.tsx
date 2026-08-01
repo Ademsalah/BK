@@ -48,12 +48,16 @@ export default function CreateEvent() {
         formData.append("photos", file);
       });
 
-      const res = await axios.post("http://localhost:5000/events", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+      const res = await axios.post(
+        "https://bk-production-d11b.up.railway.app:5000/events",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         },
-      });
+      );
 
       setEvent(res.data);
       reset();
@@ -94,7 +98,6 @@ export default function CreateEvent() {
             placeholder="De quoi parle votre événement ?"
             className="bg-white text-gray-900"
             labelClassName="text-white"
-
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -104,8 +107,7 @@ export default function CreateEvent() {
               label="Date"
               type="date"
               className="w-full p-2 rounded text-black bg-white "
-            labelClassName="text-white"
-
+              labelClassName="text-white"
             />
 
             <Input
@@ -114,8 +116,7 @@ export default function CreateEvent() {
               label="Lieu"
               placeholder="Tunis..."
               className="bg-white text-gray-900"
-            labelClassName="text-white"
-
+              labelClassName="text-white"
             />
           </div>
 
@@ -126,8 +127,7 @@ export default function CreateEvent() {
               label="Capacité"
               type="number"
               className="bg-white text-gray-900"
-            labelClassName="text-white"
-
+              labelClassName="text-white"
             />
 
             <Input
@@ -136,8 +136,7 @@ export default function CreateEvent() {
               label="Prix billet"
               type="number"
               className="bg-white text-gray-900"
-            labelClassName="text-white"
-
+              labelClassName="text-white"
             />
 
             <Input
@@ -146,8 +145,7 @@ export default function CreateEvent() {
               label="Budget total"
               type="number"
               className="bg-white text-gray-900"
-            labelClassName="text-white"
-
+              labelClassName="text-white"
             />
           </div>
         </div>

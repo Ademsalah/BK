@@ -27,10 +27,13 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginSchema) => {
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", {
-        email: data.email,
-        password: data.password,
-      });
+      const res = await axios.post(
+        "https://bk-production-d11b.up.railway.app:5000/auth/login",
+        {
+          email: data.email,
+          password: data.password,
+        },
+      );
 
       const { token, user } = res.data;
 

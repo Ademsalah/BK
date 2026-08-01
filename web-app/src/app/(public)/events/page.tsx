@@ -16,7 +16,7 @@ export default function EventsPage() {
     const fetchEvents = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/events?page=${page}&limit=${ITEMS_PER_PAGE}`,
+          `https://bk-production-d11b.up.railway.app:5000/events?page=${page}&limit=${ITEMS_PER_PAGE}`,
         );
 
         setEvents(response.data.data);
@@ -44,8 +44,10 @@ export default function EventsPage() {
       {/* GRID */}
       <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
         {events.map((event) => (
-          <div key={event.id} className="space-y-4"
-                onClick={() => router.push(`/events/${event.id}`)}
+          <div
+            key={event.id}
+            className="space-y-4"
+            onClick={() => router.push(`/events/${event.id}`)}
           >
             {/* IMAGE */}
             <div className="overflow-hidden">
@@ -70,8 +72,6 @@ export default function EventsPage() {
                     year: "numeric",
                   })}
                 </p>
-
-               
               </div>
 
               <button

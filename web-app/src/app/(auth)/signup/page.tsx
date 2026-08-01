@@ -30,11 +30,14 @@ export default function SignupPage() {
     console.log("FORM DATA:", data);
 
     try {
-      const res = await axios.post("http://localhost:5000/auth/register", {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
+      const res = await axios.post(
+        "https://bk-production-d11b.up.railway.app:5000/auth/register",
+        {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        },
+      );
       toast.success("Inscription réussie !");
 
       router.push("/login");

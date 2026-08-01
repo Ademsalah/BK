@@ -14,7 +14,7 @@ export default function ShowsSection() {
     const fetchEvents = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/events?page=1&limit=5",
+          "https://bk-production-d11b.up.railway.app:5000/events?page=1&limit=5",
         );
 
         // adapt backend shape: res.data.data

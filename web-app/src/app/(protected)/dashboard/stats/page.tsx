@@ -12,7 +12,9 @@ export default function Page() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/events");
+        const res = await axios.get(
+          "https://bk-production-d11b.up.railway.app:5000/events",
+        );
 
         const data = res.data;
 

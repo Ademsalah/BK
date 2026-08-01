@@ -37,7 +37,9 @@ export default function CreatePrestatairePage() {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/prestataires/${id}`);
+        const res = await axios.get(
+          `https://bk-production-d11b.up.railway.app:5000/prestataires/${id}`,
+        );
 
         reset(res.data); // fill form
       } catch (err) {
@@ -49,21 +51,25 @@ export default function CreatePrestatairePage() {
   }, [id, reset]);
 
   // 🚀 submit (create or update)
-  const onSubmit = async (data:any) => {
+  const onSubmit = async (data: any) => {
     try {
       setLoading(true);
 
       if (isEdit) {
         // ✏️ UPDATE
-        await axios.put(`http://localhost:5000/prestataires/${id}`, data, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.put(
+          `https://bk-production-d11b.up.railway.app:5000/prestataires/${id}`,
+          data,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
         toast.success("Prestataire modifié avec successe ");
       } else {
         // ➕ CREATE
         await axios.post(
-          "http://localhost:5000/prestataires/create-prestataire",
+          "https://bk-production-d11b.up.railway.app:5000/prestataires/create-prestataire",
           data,
           //   {
           //     headers: { Authorization: `Bearer ${token}` },
@@ -74,7 +80,7 @@ export default function CreatePrestatairePage() {
       }
 
       router.push("/dashboard/prestataireD");
-    } catch (err:any) {
+    } catch (err: any) {
       console.error(err);
       alert(err.response?.data?.error || "Error");
     } finally {

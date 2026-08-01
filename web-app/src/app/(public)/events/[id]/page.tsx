@@ -26,7 +26,7 @@ export default function EventDetailsPage() {
     const fetchEvent = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/events/${id}`
+          `https://bk-production-d11b.up.railway.app:5000/events/${id}`,
         );
 
         setEvent(response.data);
@@ -43,8 +43,7 @@ export default function EventDetailsPage() {
     if (id) fetchEvent();
   }, [id]);
 
-  const remainingTickets =
-    (event?.capacity || 0) - (event?.bookedTickets || 0);
+  const remainingTickets = (event?.capacity || 0) - (event?.bookedTickets || 0);
 
   const total = (event?.ticketPrice || 0) * quantity;
 
@@ -63,7 +62,7 @@ export default function EventDetailsPage() {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/tickets",
+        "https://bk-production-d11b.up.railway.app:5000/tickets",
         {
           eventId: event.id,
           quantity,
@@ -73,7 +72,7 @@ export default function EventDetailsPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setMessage(response.data.message);
@@ -82,9 +81,7 @@ export default function EventDetailsPage() {
         ...prev,
         bookedTickets: response.data.bookedTickets,
         status:
-          response.data.remainingTickets === 0
-            ? "non disponible"
-            : prev.status,
+          response.data.remainingTickets === 0 ? "non disponible" : prev.status,
       }));
 
       setQuantity(1);
@@ -97,7 +94,7 @@ export default function EventDetailsPage() {
         router.push("/login");
       } else {
         setMessage(
-          error.response?.data?.message || "Erreur lors de la réservation"
+          error.response?.data?.message || "Erreur lors de la réservation",
         );
       }
     } finally {
@@ -133,7 +130,7 @@ export default function EventDetailsPage() {
       {/* MAIN IMAGE */}
       <div className="flex justify-center px-4">
         <img
-          src={selectedImage || event.photos?.[0]||"/ev.jpg"}
+          src={selectedImage || event.photos?.[0] || "/ev.jpg"}
           alt={event.title}
           className="w-full max-w-[700px] h-[400px] object-cover rounded-2xl"
         />
@@ -167,9 +164,7 @@ export default function EventDetailsPage() {
         <div className="flex justify-between items-center border-b border-gray-200 pb-5">
           <div>
             <p className="text-lg font-medium">Billet normal</p>
-            <p className="text-sm text-gray-500">
-              {event.ticketPrice} DT
-            </p>
+            <p className="text-sm text-gray-500">{event.ticketPrice} DT</p>
           </div>
 
           <div className="flex items-center gap-4">
@@ -180,9 +175,7 @@ export default function EventDetailsPage() {
               -
             </button>
 
-            <span className="text-xl min-w-[30px] text-center">
-              {quantity}
-            </span>
+            <span className="text-xl min-w-[30px] text-center">{quantity}</span>
 
             <button
               disabled={quantity >= remainingTickets}
@@ -213,8 +206,8 @@ export default function EventDetailsPage() {
           {loading
             ? "Réservation..."
             : remainingTickets === 0
-            ? "Complet"
-            : "Réserver maintenant"}
+              ? "Complet"
+              : "Réserver maintenant"}
         </button>
       </div>
     </div>

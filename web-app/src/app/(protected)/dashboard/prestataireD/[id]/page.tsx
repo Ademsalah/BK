@@ -13,7 +13,7 @@ export default function OnePrestataire() {
   const fetchPrestataire = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/event-prestataires/Epresta/${params.id}`,
+        `https://bk-production-d11b.up.railway.app:5000/event-prestataires/Epresta/${params.id}`,
       );
 
       setPrestataire(data);

@@ -25,7 +25,7 @@ export default function PrestataireD() {
       setLoading(true);
 
       const res = await axios.get(
-        `http://localhost:5000/prestataires?page=${pageNumber}&limit=12&search=${searchValue}`,
+        `https://bk-production-d11b.up.railway.app:5000/prestataires?page=${pageNumber}&limit=12&search=${searchValue}`,
       );
 
       console.log(res.data);
@@ -61,7 +61,7 @@ export default function PrestataireD() {
   const toggleBan = async (id: number) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/prestataires/${id}/ban`,
+        `https://bk-production-d11b.up.railway.app:5000/prestataires/${id}/ban`,
       );
 
       setPrestataires((prev) => prev.map((p) => (p.id === id ? res.data : p)));
@@ -74,7 +74,7 @@ export default function PrestataireD() {
 
     try {
       await axios.delete(
-        `http://localhost:5000/prestataires/${selectedPrestataireId}`,
+        `https://bk-production-d11b.up.railway.app:5000/prestataires/${selectedPrestataireId}`,
       );
 
       setPrestataires((prev) =>

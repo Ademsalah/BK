@@ -18,7 +18,7 @@ export default function ParticipantD() {
       setLoading(true);
 
       const res = await axios.get(
-        `http://localhost:5000/participants/participants?page=${pageNumber}&limit=12&search=${searchValue}`,
+        `https://bk-production-d11b.up.railway.app:5000/participants/participants?page=${pageNumber}&limit=12&search=${searchValue}`,
       );
 
       setParticipants(res.data.data);
@@ -46,7 +46,7 @@ export default function ParticipantD() {
   const toggleBan = async (id: number) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/participants/participants/${id}/ban`,
+        `https://bk-production-d11b.up.railway.app:5000/participants/participants/${id}/ban`,
       );
 
       setParticipants((prev) => prev.map((p) => (p.id === id ? res.data : p)));

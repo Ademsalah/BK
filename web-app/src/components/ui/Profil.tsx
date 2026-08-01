@@ -45,7 +45,7 @@ export default function Profil() {
         if (!userId) return;
 
         const { data } = await axios.get(
-          `http://localhost:5000/participants/user/${userId}`,
+          `https://bk-production-d11b.up.railway.app:5000/participants/user/${userId}`,
         );
 
         reset({
@@ -80,9 +80,12 @@ export default function Profil() {
       }
 
       // send OTP FIRST
-      await axios.post(`http://localhost:5000/update/send-otp`, {
-        userId,
-      });
+      await axios.post(
+        `https://bk-production-d11b.up.railway.app:5000/update/send-otp`,
+        {
+          userId,
+        },
+      );
 
       setPendingData(payload);
       setOtpStep(true);
@@ -104,11 +107,14 @@ export default function Profil() {
       const userId = localStorage.getItem("userId");
       if (!userId) return;
 
-      await axios.post(`http://localhost:5000/update/verify-otp`, {
-        userId,
-        otp,
-        data: pendingData,
-      });
+      await axios.post(
+        `https://bk-production-d11b.up.railway.app:5000/update/verify-otp`,
+        {
+          userId,
+          otp,
+          data: pendingData,
+        },
+      );
       toast.success("Profil mis à jour avec succès ✅");
 
       // reset everything
