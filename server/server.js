@@ -1,5 +1,6 @@
-require("dotenv").config();
+const dotenv = require("dotenv");
 const express = require("express");
+dotenv.config();
 const app = express();
 const db = require("./models");
 const cors = require("cors");
@@ -24,3 +25,4 @@ db.sequelize.sync().then(() => {
     console.log("🚀 Server running");
   });
 });
+
