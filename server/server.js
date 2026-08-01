@@ -7,8 +7,10 @@ const cors = require("cors");
 app.use(express.json());
 
 // middlewares
-app.use(cors());
-
+app.use(cors({
+  origin: "https://bkeventad.netlify.app/",
+  credentials: true
+}));
 // routes
 app.use("/auth", require("./routes/auth.routes"));
 app.use("/events", require("./routes/event.routes"));
