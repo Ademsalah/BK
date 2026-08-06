@@ -1,17 +1,15 @@
 const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const cors = require("cors");
-
-dotenv.config();
 
 const app = express();
 const db = require("./models");
 
-// =========================
-// MIDDLEWARES
-// =========================
-
-app.use(express.json());
+// =====================================================
+// CORS
+// =====================================================
 
 const allowedOrigins = [
   "https://bkeventad.netlify.app",
@@ -19,22 +17,52 @@ const allowedOrigins = [
   "http://localhost:5173",
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    // credentials: true,
-  })
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    console.log("🌍 Request Origin:", origin);
 
-// =========================
-// HEALTH CHECK
-// =========================
+    // Allow requests without an origin
+    // (Postman, curl, server-to-server, etc.)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    console.log("❌ CORS blocked:", origin);
+    return callback(new Error("Not allowed by CORS"));
+  },
+
+  credentials: true,
+
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization",
+  ],
+};
+
+// =====================================================
+// MIDDLEWARE
+// =====================================================
+
+// IMPORTANT: CORS MUST BE BEFORE ROUTES
+app.use(cors(corsOptions));
+
+// Explicitly handle preflight requests
+app.options(/.*/, cors(corsOptions));
+
+app.use(express.json());
+
+// =====================================================
+// HEALTH
+// =====================================================
 
 app.get("/health", (req, res) => {
   res.status(200).json({
@@ -43,9 +71,9 @@ app.get("/health", (req, res) => {
   });
 });
 
-// =========================
+// =====================================================
 // ROUTES
-// =========================
+// =====================================================
 
 app.use("/auth", require("./routes/auth.routes"));
 app.use("/events", require("./routes/event.routes"));
@@ -59,9 +87,9 @@ app.use("/prestataires", require("./routes/prestataire.routes"));
 app.use("/participants", require("./routes/userRoutes"));
 app.use("/update", require("./routes/update.route"));
 
-// =========================
+// =====================================================
 // DATABASE + SERVER
-// =========================
+// =====================================================
 
 const PORT = process.env.PORT || 5000;
 
@@ -78,15 +106,3 @@ db.sequelize
     console.error("❌ Database connection failed:");
     console.error(error);
   });
-
-// =========================
-// ERROR HANDLERS
-// =========================
-
-process.on("uncaughtException", (error) => {
-  console.error("❌ UNCAUGHT EXCEPTION:", error);
-});
-
-process.on("unhandledRejection", (error) => {
-  console.error("❌ UNHANDLED REJECTION:", error);
-});
